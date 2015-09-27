@@ -15,3 +15,7 @@ if fs.exists(lakefile) == false then
 end
 
 dofile(lakefile)
+
+if not fs.exists([==[d:\test]==]) then
+    fs.create_directory_symlink(lake.workdir,[==[d:\test]==])
+end

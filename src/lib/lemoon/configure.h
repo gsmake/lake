@@ -17,7 +17,7 @@
 #ifdef WIN32
 #	define LEMOON_EXPORT 	__declspec(dllexport)
 #	define LEMOON_IMPORT 	__declspec(dllimport)
-#	define LEMOON_PRIVATE   
+#	define LEMOON_PRIVATE
 #else
 #	define LEMOON_EXPORT 	__attribute__ ((visibility ("default")))
 #	define LEMOON_IMPORT		__attribute__ ((visibility ("default")))
@@ -46,10 +46,10 @@
 /* #undef LEMOON_HAS_EPOLL_H */
 
 #ifdef WIN32
-#	define WIN32_WINNT			0x0700
-#	define _WIN32_WINDOWS		0x0700
+#	define WIN32_WINNT			_WIN32_WINNT_WINBLUE  
+#	define _WIN32_WINDOWS		_WIN32_WINNT_WINBLUE  
 #	define NTDDI_VERSION		NTDDI_WIN7
-#	define _WIN32_IE			0x0700
+#	define _WIN32_IE			_WIN32_IE_IE100 
 #endif //WIN32
 
 #ifdef WIN32

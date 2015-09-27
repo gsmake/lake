@@ -1,8 +1,8 @@
-
-#include <filesystem>
+#include <iostream>
+#include <experimental/filesystem>
 #include <lemoon/lfs.h>
 
-
+namespace fs = std::experimental::filesystem;
 
 static int lfs_dir_ls(lua_State *L);
 
@@ -12,12 +12,15 @@ static int lfs_absolute(lua_State *L);
 
 static int lfs_current_path(lua_State *L);
 
+static int lfs_create_directory_symlink(lua_State *L);
+
 static const luaL_Reg lfs_funcs[] =
 {
 	{"ls",lfs_dir_ls},
 	{"exists",lfs_exists},
 	{ "absolute",lfs_absolute },
 	{ "current", lfs_current_path },
+	{ "create_directory_symlink", lfs_create_directory_symlink },
 	{ NULL,NULL }
 };
 
@@ -73,4 +76,27 @@ static int lfs_current_path(lua_State *L)
 	lua_pushstring(L, std::experimental::filesystem::current_path().string().c_str());
 
 	return 1;
+}
+
+static int lfs_create_directory_symlink(lua_State *L)
+{
+	fs::path target = luaL_checkstring(L, 1);
+	fs::path link = luaL_checkstring(L, 2);
+
+	std::error_code ec;
+
+#ifndef WIN32
+	fs::create_directory_symlink(target,link,ec);
+#else
+	// workaround vs c++11 bug
+	if (!CreateSymbolicLink(link.c_str(),target.c_str(), SYMBOLIC_LINK_FLAG_DIRECTORY)) {
+		ec = std::error_code(GetLastError(),std::system_category());
+	}
+#endif
+
+	if (ec) {
+		lemoonL_error(L, "create symlink error :%s", ec.message().c_str());
+	}
+
+	return 0;
 }
