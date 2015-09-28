@@ -42,14 +42,14 @@
 #endif //LEMOON_BUILD_AS_DLL
 
 
-/* #undef LEMOON_KQUEUE_H */
+#define LEMOON_KQUEUE_H
 /* #undef LEMOON_HAS_EPOLL_H */
 
 #ifdef WIN32
-#	define WIN32_WINNT			_WIN32_WINNT_WINBLUE  
-#	define _WIN32_WINDOWS		_WIN32_WINNT_WINBLUE  
+#	define WIN32_WINNT			0x0700
+#	define _WIN32_WINDOWS		0x0700
 #	define NTDDI_VERSION		NTDDI_WIN7
-#	define _WIN32_IE			_WIN32_IE_IE100 
+#	define _WIN32_IE			0x0700
 #endif //WIN32
 
 #ifdef WIN32

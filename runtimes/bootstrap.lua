@@ -1,21 +1,18 @@
-fs = lemoon.fs() -- create new fs module
+local lake = require "lake.lake"
+local fs = require "lake.fs"
+local log = require "lake.log"
+local package = require "lake.package"
 
-lake = {
-    home = os.getenv("LAKE_HOME"),
-    workdir = fs.current()
-}
+log.I("start a new lake process ...")
 
-print("[inf] lake work directory :",lake.workdir)
+lake.WORKSPACE = fs.current()
 
-local lakefile = lake.workdir .. "/.gsmake.lua"
+local lakefile = lake.WORKSPACE .. "/.gsmake.lua"
 
-if fs.exists(lakefile) == false then
-    print("[err] lake file not exists : "..lakefile)
-    return
+if not fs.exists(lakefile) then
+    lake.WORKSPACE = os.getenv("LAKE_HOME")
 end
 
-dofile(lakefile)
+package.load(lake.WORKSPACE)
 
-if not fs.exists([==[d:\test]==]) then
-    fs.create_directory_symlink(lake.workdir,[==[d:\test]==])
-end
+log.I("lake process complete")

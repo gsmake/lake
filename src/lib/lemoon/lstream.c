@@ -357,7 +357,11 @@ LEMOON_PRIVATE int lreader_tostring(lua_State * L)
 
 	for (int i = stream->offset; i < stream->capacity; i++)
 	{
+#ifdef WIN32
 		offset += sprintf_s(&buff[offset], length - offset, "%d ", (unsigned char)stream->buff[i]);
+#else
+        offset += snprintf(&buff[offset], length - offset, "%d ", (unsigned char)stream->buff[i]);
+#endif
 	}
 
 	lua_pushlstring(L, buff, length);
@@ -625,7 +629,11 @@ LEMOON_PRIVATE int lwriter_tostring(lua_State * L)
 
 	for (int i = 0; i < stream->offset; i ++ )
 	{
+#ifdef WIN32
 		offset += sprintf_s(&buff[offset], length - offset, "%d ", (unsigned char)stream->buff[i]);
+#else
+        offset += snprintf(&buff[offset], length - offset, "%d ", (unsigned char)stream->buff[i]);
+#endif
 	}
 
 	lua_pushlstring(L, buff, length);

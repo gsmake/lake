@@ -76,7 +76,7 @@ LEMOON_API void lemoon_newio(lua_State *L)
 }
 
 
-LEMOON_PRIVATE int lfile_register(lua_State *L,lio * io, int fd)
+LEMOON_PRIVATE int lfile_register(lua_State *L,lio * io, handler_t fd)
 {
     struct kevent changes[2];
     EV_SET(&changes[0], fd, EVFILT_READ, EV_ADD|EV_CLEAR|EV_EOF, 0, 0, NULL);
