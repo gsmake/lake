@@ -42,7 +42,7 @@
 #endif //LEMOON_BUILD_AS_DLL
 
 
-#define LEMOON_KQUEUE_H
+/* #undef LEMOON_KQUEUE_H */
 /* #undef LEMOON_HAS_EPOLL_H */
 
 #ifdef WIN32

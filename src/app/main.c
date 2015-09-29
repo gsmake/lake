@@ -23,7 +23,7 @@ static int lake_pmain(lua_State *L) {
   }
 
   if (LEMOON_RUNTIME_ERROR ==
-      lemoonL_dostring(L, "dofile(\"%s/runtimes/bootstrap.lua\")", path)) {
+      lemoonL_dostring(L, "dofile(\"%s/runtimes/main.lua\")", path)) {
     lemoonL_error(L, "%s", lua_tostring(L, -1));
   }
 

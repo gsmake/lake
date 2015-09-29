@@ -19,7 +19,8 @@ function module:load_plugins()
 
     for k,v in pairs(self.prepare_plugins) do
         log.D("loading plugin :%s",k)
-
+        v:load(k)
+        self.plugins[v.alias] = v
         log.D("loading plugin :%s -- success",k)
     end
 end

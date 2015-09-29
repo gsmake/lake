@@ -17,9 +17,6 @@ local capi = sqlite3.open(lake.HOME_PATH .. "/metadata/lake.db")
 local module = {}
 function module.open(packagename)
     log.D("open package(%s) vfs space ...",packagename)
-
-
-
 end
 
 
