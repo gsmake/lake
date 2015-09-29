@@ -1,5 +1,5 @@
 #include <lemoon/lemoon.h>
-#include <vfs/vfs.h>
+#include <sqlite/lsqlite3.h>
 
 #define ENV "LAKE_HOME"
 
@@ -8,7 +8,7 @@ static int lake_pmain(lua_State *L) {
 
   luaL_requiref(L, "lemoon", luaopen_lemoon, 1);
 
-  luaL_requiref(L, "__vfs", luaopen_vfs, 1);
+  luaL_requiref(L, "__sqlite3", luaopen_lsqlite3, 1);
 
   const char *path = getenv(ENV);
 

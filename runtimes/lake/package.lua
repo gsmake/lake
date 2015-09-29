@@ -1,72 +1,49 @@
--- load package
-local log = require "lake.log"
-local fs = require "lake.fs"
-local strings = require "lake.strings"
-local vfs = require "lake.vfs"
-
+-- package module
 local module = {}
 
-local loading = require "lake.list"
-
 function module.load(path)
-    log.D("loading package :" .. path)
 
-    local lakefile = path .. "/.gsmake.lua"
+    local env = {}
 
-    if not fs.exists(lakefile) then
-        log.I("skip load package : .gsmake.lua not found\n\tpath :" .. path)
+    for k,v in pairs(_ENV) do
+        env[k] = v
     end
 
-    local metadata = dofile(lakefile)
+    local lake = require "lake.sandbox" .new({})
 
-    if metadata == nil then
-        error(string.format("loading %s error : expect return metadata",lakefile))
+    env.publish = function(name)
+        env.__lake = require "lake.sandbox" .new({ name = name })
+        return env.__lake
     end
 
-    log.D("--------------------------------------------------")
+    local metadata = {}
 
-    log.D("loading package ...")
+    metadata.__index = function (table, key)
 
-    log.D("name    :%s", metadata.name)
+      local v = env.__lake:__index(key)
 
-    log.D("domain  :%s", strings.printenum(metadata.domain))
+      if type(v) == "function" then
+          return function(...)
+              return v(env.__lake,...)
+          end
+      end
 
-    for _,import in ipairs(metadata.imports) do
+      return v
 
-        if import.name == nil or import.name == "" then
-            error("package name must set")
-        end
-
-        if import.domain == nil then
-            import.domain = metadata.domain
-        end
-
-        if import.version == nil then
-            import.version = "master"
-        end
-
-        log.D("import  :{ name :%s, domain :%s, version :%s }",import.name, strings.printenum(import.domain),import.version)
     end
 
-    for _,task in ipairs(metadata.tasks) do
+    setmetatable(env,metadata)
 
-        if task.domain == nil then
-            task.domain = metadata.domain
-        end
+    local call,err = loadfile(path,"bt",env)
 
-        log.D("task    : %s -> %s ;%s", task.name, strings.printenum(task.domain), task.description)
+    if err ~= nil then
+        error(err)
     end
 
-    log.D("--------------------------------------------------")
+    -- call .gsmake.lua script
+    call()
 
-
-    vfs.open(metadata.name)
-
-    -- load imports
-
-
-
-    --log.I(tostring(metadata))
+    return env.__lake
 end
 
 return module

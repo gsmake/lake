@@ -13,6 +13,6 @@ if not fs.exists(lakefile) then
     lake.WORKSPACE = os.getenv("LAKE_HOME")
 end
 
-package.load(lake.WORKSPACE)
+lake:load()
 
 log.I("lake process complete")
