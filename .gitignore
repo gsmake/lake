@@ -29,6 +29,5 @@
 bin
 build
 *.db
-
 cached
 userspace

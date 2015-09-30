@@ -1,7 +1,7 @@
 #include <lemoon/lemoon.h>
 #include <sqlite/lsqlite3.h>
 
-#define ENV "LAKE_HOME"
+#define ENV "GSMAKE_HOME"
 
 static int lake_pmain(lua_State *L) {
   luaL_openlibs(L);
