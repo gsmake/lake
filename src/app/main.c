@@ -17,8 +17,8 @@ static int lake_pmain(lua_State *L) {
   }
 
   if (LEMOON_RUNTIME_ERROR ==
-      lemoonL_dostring(L, "package.path = package.path ..';%s/runtimes/?.lua'",
-                       path)) {
+	  lemoonL_dostring(L, "package.path = package.path ..';%s/runtimes/?.lua;%s/runtimes/?/init.lua'",
+                       path, path)) {
     lemoonL_error(L, "set addition load path failed :%s", lua_tostring(L, -1));
   }
 

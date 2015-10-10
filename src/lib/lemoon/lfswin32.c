@@ -10,6 +10,8 @@ static int lfs_mkdir(lua_State *L);
 
 static int lfs_current_path(lua_State *L);
 
+static int lfs_fullpath(lua_State *L);
+
 static int lfs_create_directory_symlink(lua_State *L);
 
 static const luaL_Reg lfs_funcs[] = {
@@ -17,6 +19,7 @@ static const luaL_Reg lfs_funcs[] = {
 	{ "isdir", lfs_isdir },
 	{ "mkdir", lfs_mkdir },
 	{ "current", lfs_current_path },
+	{ "fullpath", lfs_fullpath },
 	{ "create_directory_symlink", lfs_create_directory_symlink },
 	{ NULL, NULL }
 };
@@ -93,6 +96,25 @@ static int lfs_create_directory_symlink(lua_State *L) {
 	}
 
 	return 0;
+}
+
+static int lfs_fullpath(lua_State *L) {
+
+	DWORD length = GetFullPathNameA(luaL_checkstring(L,1),0,NULL,NULL);
+
+	if (length == 0) {
+		return lemoonL_sysmerror(L, GetLastError(), "call GetFullPathName error");
+	}
+
+	char * buff = (char*)malloc(length);
+
+	GetFullPathNameA(luaL_checkstring(L, 1), length, buff, NULL);
+
+	lua_pushlstring(L, buff, length);
+
+	free(buff);
+
+	return 1;
 }
 
 #endif

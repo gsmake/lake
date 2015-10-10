@@ -1666,6 +1666,7 @@ static int db_exec(lua_State *L) {
     sdb *db = lsqlite_checkdb(L, 1);
     const char *sql = luaL_checkstring(L, 2);
     int result;
+	char *errmsg;
 
     if (!lua_isnoneornil(L, 3)) {
         /* stack:
@@ -1678,15 +1679,19 @@ static int db_exec(lua_State *L) {
         lua_settop(L, 4);   /* 'trap' userdata - nil extra parameters */
         lua_pushnil(L);     /* column names not known at this point */
         lua_newtable(L);    /* column values table */
-
-        result = sqlite3_exec(db->db, sql, db_exec_callback, L, NULL);
+        result = sqlite3_exec(db->db, sql, db_exec_callback, L, &errmsg);
     }
     else {
         /* no callbacks */
-        result = sqlite3_exec(db->db, sql, NULL, NULL, NULL);
+        result = sqlite3_exec(db->db, sql, NULL, NULL, &errmsg);
     }
 
     lua_pushinteger(L, result);
+	if (errmsg != NULL) {
+		lua_pushstring(L, errmsg);
+		sqlite3_free(errmsg);
+		return 2;
+	}
     return 1;
 }
 

@@ -2,6 +2,7 @@
 #include <lemoon/lemoon.h>
 #include <lemoon/lstream.h>
 #include <lemoon/lencrypto.h>
+#include <lemoon/lsysinfo.h>
 #ifndef WIN32
 #include <sys/time.h>
 #endif
@@ -77,6 +78,7 @@ static luaL_Reg lemoon_funcs[] = {{"timer", ltimer_new},
                                   {"writer", lwriter_new},
                                   {"dhkey", ldhkey_new},
                                   {"fs", lfs_new},
+								  { "sysinfo",lsysinfo},
                                   {NULL, NULL}};
 
 LEMOON_API int luaopen_lemoon(lua_State *L) {
