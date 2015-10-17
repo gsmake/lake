@@ -3,6 +3,7 @@
 
 #define ENV "GSMAKE_HOME"
 
+
 static int lake_pmain(lua_State *L) {
   luaL_openlibs(L);
 
@@ -16,14 +17,25 @@ static int lake_pmain(lua_State *L) {
     lemoonL_error(L, "env " ENV " not found");
   }
 
-  if (LEMOON_RUNTIME_ERROR ==
-	  lemoonL_dostring(L, "package.path = package.path ..';%s/runtimes/?.lua;%s/runtimes/?/init.lua'",
-                       path, path)) {
-    lemoonL_error(L, "set addition load path failed :%s", lua_tostring(L, -1));
+  char *cleanpath = malloc(strlen(path) + 1);
+
+  memset(cleanpath,0,strlen(path) + 1);
+
+  for (int i = 0; i < strlen(path); i++) {
+	  if (path[i] == '\\') {
+		  cleanpath[i] = '/';
+	  } else {
+		  cleanpath[i] = path[i];
+	  }
   }
 
   if (LEMOON_RUNTIME_ERROR ==
-      lemoonL_dostring(L, "dofile(\"%s/runtimes/main.lua\")", path)) {
+	  lemoonL_dostring(L, "package.path = package.path ..';%s/runtimes/?.lua;%s/runtimes/?/init.lua'",
+		  cleanpath, cleanpath)) {
+	  lemoonL_error(L, "set addition load path failed :%s", lua_tostring(L, -1));
+  }
+
+  if (LEMOON_RUNTIME_ERROR == lemoonL_dostring(L, "dofile('%s/runtimes/main.lua')", cleanpath)) {
     lemoonL_error(L, "%s", lua_tostring(L, -1));
   }
 

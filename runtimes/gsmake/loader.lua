@@ -4,6 +4,7 @@ local plugin = require "gsmake.plugin"
 
 
 local loader = {}
+
 function loader:ctor()
     self.prepare_plugins = {}
     self.plugins = {}
@@ -35,7 +36,10 @@ end
 
 
 local module = {}
+
 function module.load(path)
+
+    -- TODO: check if the .gsmake.lua file exists
 
     local env = {}
 

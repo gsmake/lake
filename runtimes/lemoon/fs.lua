@@ -23,4 +23,21 @@ function module.mkdirall(path)
     end
 end
 
+function module.removeall(path)
+    if not module.isdir(path) then
+        if module.exists(path) then
+            module.rmfile(path)
+            return
+        end
+    end
+
+    module.ls(path,function(entry)
+        if entry ~= '.' and entry ~= ".." then
+            module.removeall(filepath.join(path,entry))
+        end
+    end)
+
+    module.rmdir(path)
+end
+
 return module

@@ -10,16 +10,28 @@ static int lfs_mkdir(lua_State *L);
 
 static int lfs_current_path(lua_State *L);
 
+static int lfs_set_current_path(lua_State *L);
+
 static int lfs_fullpath(lua_State *L);
 
 static int lfs_create_directory_symlink(lua_State *L);
+
+static int lfs_rmdir(lua_State *L);
+
+static int lfs_rmfile(lua_State *L);
+
+static int lfs_ls(lua_State *L);
 
 static const luaL_Reg lfs_funcs[] = {
 	{ "exists", lfs_exists },
 	{ "isdir", lfs_isdir },
 	{ "mkdir", lfs_mkdir },
 	{ "current", lfs_current_path },
+	{ "setcurrent", lfs_set_current_path },
 	{ "fullpath", lfs_fullpath },
+	{ "rmdir", lfs_rmdir },
+	{ "rmfile", lfs_rmfile },
+	{ "ls", lfs_ls },
 	{ "create_directory_symlink", lfs_create_directory_symlink },
 	{ NULL, NULL }
 };
@@ -87,6 +99,15 @@ static int lfs_current_path(lua_State *L) {
 	return 1;
 }
 
+static int lfs_set_current_path(lua_State *L) {
+	const char * target = luaL_checkstring(L, 1);
+	if(!SetCurrentDirectoryA(target)){
+		lemoonL_sysmerror(L, GetLastError(),"set current path to (%s) error",target);
+	}
+
+	return 0;
+}
+
 static int lfs_create_directory_symlink(lua_State *L) {
 	const char * target = luaL_checkstring(L, 1);
 	const char * linkpath = luaL_checkstring(L, 2);
@@ -94,6 +115,75 @@ static int lfs_create_directory_symlink(lua_State *L) {
 	if (0 == CreateSymbolicLinkA(linkpath, target, SYMBOLIC_LINK_FLAG_DIRECTORY)) {
 		lemoonL_sysmerror(L, GetLastError(), "call CreateSymbolicLinkA error");
 	}
+
+	return 0;
+}
+
+static int lfs_rmdir(lua_State *L) {
+	const char * target = luaL_checkstring(L, 1);
+
+	if(0 == RemoveDirectoryA(target)) {
+		lemoonL_sysmerror(L,GetLastError(),"rm directory error :%s",target);
+	}
+
+	return 0;
+}
+
+static int lfs_rmfile(lua_State *L) {
+	
+	const char * target = luaL_checkstring(L, 1);
+
+	for (;;) {
+		if (0 == DeleteFileA(target)) {
+
+			if (GetLastError() == ERROR_ACCESS_DENIED) {
+				DWORD attrs = GetFileAttributesA(target);
+				attrs &= ~FILE_ATTRIBUTE_READONLY;
+				SetFileAttributesA(target, attrs);
+				continue;
+			}
+
+			lemoonL_sysmerror(L, GetLastError(), "rm file error :%s", target);
+		}
+
+		break;
+	}
+
+	
+
+	return 0;
+}
+
+static int lfs_ls(lua_State *L) {
+	WIN32_FIND_DATAA context;
+
+	HANDLE handler = NULL;
+
+	const char * target = luaL_checkstring(L, 1);
+
+	char path[1024] = { 0 };
+
+	sprintf_s(path, sizeof(path), "%s/*", target);
+
+	luaL_checktype(L, 2, LUA_TFUNCTION);
+
+	if((handler = FindFirstFileA(path,&context)) == INVALID_HANDLE_VALUE){
+		return lemoonL_sysmerror(L, GetLastError(),"list directory error :%s", target);
+	}
+
+	do {
+		
+		lua_pushvalue(L, 2);
+
+		lua_pushstring(L, context.cFileName);
+
+		if (0 != lua_pcall(L, 1, 0, 0)) {
+			FindClose(handler);
+			lemoonL_error(L, "ls callback error :%s", lua_tostring(L, -1));
+		}
+	} while (FindNextFileA(handler,&context));
+
+	FindClose(handler);
 
 	return 0;
 }

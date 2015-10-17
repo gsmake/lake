@@ -31,3 +31,4 @@ build
 *.db
 cached
 userspace
+.db

@@ -11,16 +11,24 @@ function module.Flags(flags)
 end
 
 
-function module.I(fmt, ...)
-    print(colors('%{white}' .. string.format(fmt,...) .. '%{reset}'))
-end
-
 function module.E(fmt, ...)
     print(colors('%{red}' .. string.format(fmt,...) .. '%{reset}'))
 end
 
+function module.W(fmt, ...)
+    print(colors('%{dim}' .. string.format(fmt,...) .. '%{reset}'))
+end
+
+function module.I(fmt, ...)
+    print(colors('%{white}' .. string.format(fmt,...) .. '%{reset}'))
+end
+
 function module.D(fmt, ...)
     print(colors('%{green}' .. string.format(fmt,...) .. '%{reset}'))
+end
+
+function module.V(fmt, ...)
+    print(colors('%{magenta}' .. string.format(fmt,...) .. '%{reset}'))
 end
 
 return module
