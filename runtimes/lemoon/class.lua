@@ -15,4 +15,16 @@ function module.make(obj,funcs)
     return obj
 end
 
+function module.clone(table)
+    local clone = {}
+
+    for k,v in pairs(table) do
+       clone[k] = v
+    end
+
+    setmetatable(clone,getmetatable(table))
+
+    return clone
+end
+
 return module
