@@ -32,3 +32,4 @@ build
 cached
 userspace
 .db
+.gsmake
