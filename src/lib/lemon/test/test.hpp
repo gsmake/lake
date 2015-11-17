@@ -5,6 +5,6 @@
 #ifndef LAKE_UNITTEST_HPP
 #define LAKE_UNITTEST_HPP
 
-#include <lemon/test/runner.hpp>
+#include <lemon/test/macro.hpp>
 
 #endif //LAKE_UNITTEST_HPP

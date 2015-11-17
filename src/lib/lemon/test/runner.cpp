@@ -1,5 +1,5 @@
 #include <lemon/test/runner.hpp>
-
+#include <lemon/test/unit.hpp>
 namespace lemon {namespace test{
 
     runner& runner::instance()
@@ -15,9 +15,14 @@ namespace lemon {namespace test{
 
     void runner::done() {
 
+        for(auto unit : _units)
+        {
+            unit->run();
+        }
     }
 
-    void runner::add(runnable *unit) {
+    void runner::add(runnable *unit)
+    {
         _units.push_back(unit);
     }
 }}

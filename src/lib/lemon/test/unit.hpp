@@ -2,7 +2,6 @@
 #define LEMON_TEST_UNIT_HPP
 
 #include <string>
-#include <functional>
 #include <lemon/nocopy.hpp>
 
 namespace lemon { namespace test {
@@ -18,30 +17,68 @@ namespace lemon { namespace test {
         virtual void run() = 0;
 
         virtual const std::string & name() const = 0;
+
+        virtual const std::string & file() const = 0;
+
+        virtual int lines() const = 0;
     };
 
 
     /**
      * the test unit class hold the test function object and test name
      */
-    class T : public runnable
+    class unit: public runnable
     {
     public:
 
-        T(const std::string && name,std::function<void(const T&)> func);
-
-        void run() final;
+        unit(const std::string & name, const std::string & filename, int lines);
 
         /**
          * get the test name;
          */
         const std::string & name() const final;
 
+        /**
+         * get test file path;
+         */
+        const std::string & file() const final;
+
+        /**
+         * get test start lines
+         */
+        int lines() const final;
+
+        /**
+         * test main method
+         */
+        virtual void main() = 0;
+
     private:
 
         std::string                     _name;
+        std::string                     _filename;
+        int                             _lines;
+    };
 
-        std::function<void(const T&)>   _func; /* the test function object */
+    class T : public unit
+    {
+    public:
+        T(const std::string & name, const std::string & filename, int lines);
+
+        void run();
+    };
+
+    class B : public unit
+    {
+    public:
+
+        B(const std::string & name, const std::string & filename, int lines);
+
+        void run();
+
+    public:
+
+        int             N;
     };
 }}
 
