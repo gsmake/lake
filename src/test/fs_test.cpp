@@ -24,6 +24,8 @@ test_(set_current_directory){
     set_current_directory("./test");
 
     set_current_directory("../");
+
+    test_assert(lemon::fs::abs(".") == current_directory());
 }
 
 
@@ -48,7 +50,7 @@ test_(create_symlink_test){
 
 test_(filepath) {
 
-    std::cout << lemon::filepath::path("..").compress().string() << std::endl;
+
 
     test_assert(lemon::filepath::path("/").string() == "/");
 

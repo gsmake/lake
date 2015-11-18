@@ -62,6 +62,21 @@ namespace lemon{ namespace filepath{
             return basic_path(_volume,nodes);
         }
 
+        bool abs() const
+        {
+            if(_nodes.empty())
+            {
+                return true;
+            }
+
+            if(_nodes[0] != string_type(1,CharType('.')))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         string_type leaf() const
         {
             if(_nodes.empty())
@@ -109,6 +124,16 @@ namespace lemon{ namespace filepath{
             _nodes = nodes;
 
             return *this;
+        }
+
+        bool operator == (const basic_path & rhs) const
+        {
+            return string() == rhs.string();
+        }
+
+        bool operator == (const string_type & rhs) const
+        {
+            return string() == basic_path(rhs).string();
         }
 
         /**

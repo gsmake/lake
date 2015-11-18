@@ -2,10 +2,7 @@
 
 #ifndef WIN32
 
-#include <errno.h>
-#include <stdlib.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 namespace lemon { namespace fs{
 
@@ -17,7 +14,7 @@ namespace lemon { namespace fs{
 
         free(dir);
 
-        return current;
+        return filepath::path(current).compress().string();
     }
 
 

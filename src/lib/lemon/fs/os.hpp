@@ -3,8 +3,10 @@
 
 #include <string>
 #include <system_error>
+#include <lemon/fs/filepath.hpp>
 
-namespace lemon { namespace fs{
+namespace lemon { namespace fs {
+
 
     /**
      * return program current work directory
@@ -103,6 +105,16 @@ namespace lemon { namespace fs{
         {
             throw std::system_error(ec);
         }
+    }
+
+    inline std::string abs(const std::string & source)
+    {
+        if(filepath::path(source).abs())
+        {
+            return source;
+        }
+
+        return filepath::path(current_directory() + "/" + source).compress().string();
     }
 }}
 
