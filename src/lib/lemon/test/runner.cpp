@@ -1,5 +1,8 @@
+#include <iostream>
 #include <lemon/test/runner.hpp>
 #include <lemon/test/unit.hpp>
+
+
 namespace lemon {namespace test{
 
     runner& runner::instance()
@@ -17,7 +20,20 @@ namespace lemon {namespace test{
 
         for(auto unit : _units)
         {
-            unit->run();
+            try
+            {
+                unit->run();
+                std::cout << "test(" << unit->name() << ")";
+                std::cout << " ok" << std::endl;
+            }
+            catch(const std::exception &e)
+            {
+                std::cout << "test(" << unit->name() << ")";
+                std::cout << " exec failed !!!!" << std::endl;
+                std::cout <<"\terr  :" << e.what() << std::endl;
+                std::cout <<"\tfile :" << unit->file() << "(" << unit->lines() << ")" << std::endl;
+            }
+
         }
     }
 
