@@ -25,6 +25,10 @@ test_(set_current_directory){
 
     set_current_directory("../");
 
+	std::cout << lemon::fs::abs(".") << std::endl;
+
+	std::cout << current_directory() << std::endl;
+
     test_assert(lemon::fs::abs(".") == current_directory());
 }
 
@@ -50,37 +54,37 @@ test_(create_symlink_test){
 
 test_(filepath) {
 
+	std::cout << lemon::filepath::path("./").slash() << std::endl;
 
+    test_assert(lemon::filepath::path("/").slash() == "/");
 
-    test_assert(lemon::filepath::path("/").string() == "/");
+    test_assert(lemon::filepath::path("").slash() == "/");
 
-    test_assert(lemon::filepath::path("").string() == "/");
-
-    test_assert(lemon::filepath::path("./").string() == "./");
+    test_assert(lemon::filepath::path("./").slash() == "./");
 
     test_assert(lemon::filepath::path("./").leaf() == ".");
 
-    test_assert(lemon::filepath::path("./").parent().string() == "./");
+    test_assert(lemon::filepath::path("./").parent().slash() == "./");
 
-    test_assert(lemon::filepath::path("./test/").string() == "./test/");
+    test_assert(lemon::filepath::path("./test/").slash() == "./test/");
 
-    test_assert(lemon::filepath::path("c:.").string() == "c:./");
+    test_assert(lemon::filepath::path("c:.").slash() == "c:./");
 
-    test_assert(lemon::filepath::path("c:").string() == "c:/");
+    test_assert(lemon::filepath::path("c:").slash() == "c:/");
 
     test_assert(lemon::filepath::path("c:").leaf() == "c:");
 
-    test_assert(lemon::filepath::path("c:").parent().string() == "c:/");
+    test_assert(lemon::filepath::path("c:").parent().slash() == "c:/");
 
-    test_assert(lemon::filepath::path("c:/test/").string() == "c:/test/");
+    test_assert(lemon::filepath::path("c:/test/").slash() == "c:/test/");
 
-    test_assert(lemon::filepath::path("c:./2").string() == "c:./2/");
+    test_assert(lemon::filepath::path("c:./2").slash() == "c:./2/");
 
-    test_assert(lemon::filepath::path("c:/test/").parent().string() == "c:/");
+    test_assert(lemon::filepath::path("c:/test/").parent().slash() == "c:/");
 
     test_assert(lemon::filepath::path("c:/test/").leaf() == "test");
 
-    test_assert(lemon::filepath::path("c:/test/..").compress().string() == "c:/");
+    test_assert(lemon::filepath::path("c:/test/..").compress().slash() == "c:/");
 
-    test_assert(lemon::filepath::path("..").compress().string() == "/");
+    test_assert(lemon::filepath::path("..").compress().slash() == "/");
 }

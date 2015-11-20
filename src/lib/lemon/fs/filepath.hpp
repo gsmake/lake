@@ -178,7 +178,7 @@ namespace lemon{ namespace filepath{
         /**
          * get filepath string using provide separator
          */
-        const std::string string(char separator)
+        const std::string string(char s)
         {
             std::basic_stringstream<CharType> stream;
 
@@ -186,19 +186,19 @@ namespace lemon{ namespace filepath{
 
             if(_nodes.empty())
             {
-                stream << CharType(separator);
+                stream << CharType(s);
 
                 return stream.str();
             }
 
             if(_nodes[0] != string_type(1,CharType('.')))
             {
-                stream << CharType(separator);
+                stream << CharType(s);
             }
 
             for(auto node : _nodes)
             {
-                stream  << node << CharType(separator);
+                stream  << node << CharType(s);
             }
 
             return stream.str();
