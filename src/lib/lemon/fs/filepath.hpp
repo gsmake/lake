@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <lemon/fs/os.hpp>
+#include <stdexcept>
 
 namespace lemon{ namespace filepath{
 
@@ -173,12 +173,17 @@ namespace lemon{ namespace filepath{
             {
                 _nodes.push_back(body.substr(start));
             }
+
+			if (!source.empty() && (source[source.length() -1] == CharType('/') || source[source.length() - 1] == CharType('\\')))
+			{
+				_endWithSeparator = true;
+			}
         }
 
         /**
          * get filepath string using provide separator
          */
-        const std::string string(char s)
+        const string_type string(char s)
         {
             std::basic_stringstream<CharType> stream;
 
@@ -201,21 +206,70 @@ namespace lemon{ namespace filepath{
                 stream  << node << CharType(s);
             }
 
-            return stream.str();
+			if(_endWithSeparator)
+			{
+
+				return stream.str();
+			}
+
+			auto str = stream.str();
+
+            return str.substr(0,str.length() - 1);
         }
 
         /**
          * get filepath string using slash as separator character
          */
-        const std::string slash()
+        const string_type slash()
         {
             return string('/');
         }
 
-        const std::string string()
+        const string_type string()
         {
             return string(separator);
         }
+
+		const string_type native()
+		{
+			return string(separator);
+		}
+
+		basic_path& operator / (const basic_path & rhs)
+		{
+			if(rhs.abs())
+			{
+				throw std::runtime_error();
+			}
+
+			_nodes.insert(_nodes.end(), rhs._nodes.begin(), rhs._nodes.end());
+
+			_endWithSeparator = rhs._endWithSeparator;
+
+			return *this;
+		}
+
+		basic_path& operator / (const string_type & rhs)
+		{
+			if(rhs.empty())
+			{
+				return *this;
+			}
+
+			_nodes.push_back(rhs);
+
+			if (rhs.back() == CharType('\\') || rhs.back() == CharType('/'))
+			{
+				_endWithSeparator = true;
+			} 
+			else 
+			{
+				_endWithSeparator = false;
+			}
+
+			return *this;
+		}
+
     private:
         static inline bool isslash(CharType c)
         {
@@ -281,6 +335,8 @@ namespace lemon{ namespace filepath{
         string_type                            _volume;
 
         nodes_type                             _nodes;
+
+		bool								   _endWithSeparator;
     };
 
 
