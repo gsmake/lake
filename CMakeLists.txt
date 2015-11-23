@@ -12,6 +12,8 @@ if(MSVC)
         string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
         string(REGEX REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
     endforeach(flag_var)
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
 

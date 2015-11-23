@@ -3,16 +3,17 @@
 
 namespace lemon{ namespace io{
 
-	class buffer
+	struct buffer
 	{
-
+		void			*data;
+		size_t			length;
 	};
 
-	class const_buffer
+	struct const_buffer
 	{
-
+		const void		*data;
+		size_t			length;
 	};
-
 }}
 
 #endif //LEMON_IO_BUFF_HPP

@@ -3,6 +3,7 @@
 #include <lemon/os/exec.hpp>
 #include <lemon/fs/fs.hpp>
 #include <lemon/strings.hpp>
+#include <lemon/os/os_errors.hpp>
 
 namespace lemon {namespace exec {
 
@@ -19,8 +20,10 @@ namespace lemon {namespace exec {
 		
 #ifdef WIN32
 		const std::string seperator = ";";
+		const std::string extend = ".exe";
 #else
 		const std::string seperator = ":";
+		const std::string extend = "";
 #endif //WIN32
 
 		auto paths = strings::split(std::get<0>(path), seperator);
@@ -32,13 +35,13 @@ namespace lemon {namespace exec {
 
 		::GetSystemDirectoryW(&buff[0], buff.size());
 
-		paths.push_back(convert().to_bytes(std::wstring(buff.begin(), buff.end())));
+		paths.push_back(convert().to_bytes(&buff[0]));
 #else
 #endif 
 
 		for(auto p : paths)
 		{
-			auto fullpath = (filepath::path(p) / cmd).native();
+			auto fullpath = (filepath::path(p) / (cmd + extend)).native();
 			
 			if(fs::exists(fullpath))
 			{
@@ -51,26 +54,43 @@ namespace lemon {namespace exec {
 
 
 	command::command(const std::string & name)
+		:_process(nullptr),_stdin(nullptr),_stdout(nullptr),_stderr(nullptr)
 	{
+		if(fs::exists(name))
+		{
+			_path = name;
+			return;
+		}
 
+		if(fs::exists(name + os::execute_suffix()))
+		{
+			_path = name + os::execute_suffix();
+			return;
+		}
+
+		auto path = lookup(name);
+
+		if (!std::get<1>(path)) 
+		{
+			throw std::system_error((int)os::errc::command_not_found, os::os_error_category(),name);
+		}
+
+		_path = std::get<0>(path);
 	}
+
+	command::~command()
+	{
+		if(_process)
+		{
+			delete _process;
+		}
+	}
+
 
 	command & command::setenv(const std::vector<std::string> & env)
 	{
+		this->_env = env;
 		return *this;
-	}
-
-	void command::start(std::initializer_list<std::string> args)
-	{
-
-	}
-
-	/*
-	* wait command return
-	*/
-	int command::wait()
-	{
-		return 0;
 	}
 
 	/**
@@ -78,6 +98,7 @@ namespace lemon {namespace exec {
 	*/
 	command & command::setstdin(io::reader *reader)
 	{
+		this->_stdin = reader;
 		return *this;
 	}
 	/**
@@ -85,6 +106,28 @@ namespace lemon {namespace exec {
 	*/
 	command & command::setstdout(io::writer * writer)
 	{
+		this->_stdout = writer;
 		return *this;
 	}
+
+	/**
+	* set the stderr writer
+	*/
+	command & command::setstderr(io::writer * writer)
+	{
+		this->_stderr = writer;
+		return *this;
+	}
+
+	int command::wait()
+	{
+		return _process->wait();
+	}
+
+	command & command::setdir(const std::string & dir)
+	{
+		_workpath = dir;
+		return *this;
+	}
+
 }}

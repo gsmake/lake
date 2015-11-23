@@ -68,7 +68,7 @@ test_(filepath) {
 
     test_assert(lemon::filepath::path("./test/").slash() == "./test/");
 
-    test_assert(lemon::filepath::path("c:.").slash() == "c:./");
+    test_assert(lemon::filepath::path("c:.").slash() == "c:.");
 
     test_assert(lemon::filepath::path("c:").slash() == "c:/");
 
@@ -78,7 +78,7 @@ test_(filepath) {
 
     test_assert(lemon::filepath::path("c:/test/").slash() == "c:/test/");
 
-    test_assert(lemon::filepath::path("c:./2").slash() == "c:./2/");
+    test_assert(lemon::filepath::path("c:./2").slash() == "c:./2");
 
     test_assert(lemon::filepath::path("c:/test/").parent().slash() == "c:/");
 

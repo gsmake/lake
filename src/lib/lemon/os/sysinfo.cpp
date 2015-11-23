@@ -52,12 +52,20 @@ namespace lemon {
 
 			std::vector<wchar_t> buff(length);
 
-			::GetEnvironmentVariableW(namew.c_str(), &buff[0], length);
+			::GetEnvironmentVariableW(namew.c_str(), &buff[0], buff.size());
 
-			return std::make_tuple(std::string(buff.begin(), buff.end()), true);
+			return std::make_tuple(convert().to_bytes(&buff[0]), true);
 		}
 #else 
 
 #endif //WIN32
+		std::string execute_suffix()
+		{
+#ifdef WIN32
+			return ".exe";
+#else
+			return "";
+#endif
+		}
 	}
 }

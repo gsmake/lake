@@ -19,6 +19,8 @@ namespace lemon{ namespace os{
 	//
 	// get env by name
 	std::tuple<std::string,bool> getenv(const std::string&);
+
+	std::string execute_suffix();
 }}
 
 #endif //LEMON_OS_SYSINFO_HPP

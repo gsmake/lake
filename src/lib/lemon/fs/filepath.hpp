@@ -36,8 +36,8 @@ namespace lemon{ namespace filepath{
             parse(path);
         }
 
-        basic_path(const std::string & vol,const std::vector<string_type> & nodes)
-            :_volume(vol),_nodes(nodes)
+        basic_path(const std::string & vol,const std::vector<string_type> & nodes,bool isdir)
+            :_volume(vol),_nodes(nodes),_endWithSeparator(isdir)
         {
 
         }
@@ -46,6 +46,7 @@ namespace lemon{ namespace filepath{
         {
             _volume = "";
             _nodes.clear();
+			_endWithSeparator = false;
         }
 
         basic_path<CharType> parent() const
@@ -54,12 +55,12 @@ namespace lemon{ namespace filepath{
 
             if(nodes.size() == 1 && nodes[0] == string_type(1,CharType('.')))
             {
-                return basic_path(_volume,nodes);
+                return basic_path(_volume,nodes,_endWithSeparator);
             }
 
             if(!nodes.empty()) nodes.pop_back();
 
-            return basic_path(_volume,nodes);
+            return basic_path(_volume,nodes,_endWithSeparator);
         }
 
         bool abs() const

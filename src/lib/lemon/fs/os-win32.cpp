@@ -37,7 +37,9 @@ namespace lemon {
 
 		bool exists(const std::string & path)
 		{
-			if (INVALID_FILE_ATTRIBUTES == GetFileAttributesW(convert().from_bytes(path).c_str())) {
+			auto fullpath = abs(path);
+
+			if (INVALID_FILE_ATTRIBUTES == GetFileAttributesW(convert().from_bytes(fullpath).c_str())) {
 				return false;
 			}
 		
