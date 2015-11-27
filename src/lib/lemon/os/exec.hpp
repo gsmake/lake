@@ -40,7 +40,14 @@ namespace lemon{ namespace exec{
 
 		int wait();
 
-		command & start(std::initializer_list<std::string> args);
+		command & start(std::vector<std::string> args);
+
+		command & start(std::initializer_list<std::string> args)
+		{
+			start(std::vector<std::string>(args));
+
+			return *this;
+		}
 
 
 		command & setdir(const std::string & dir);

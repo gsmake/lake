@@ -7,15 +7,25 @@
 using namespace lemon::os;
 using namespace lemon::exec;
 test_(getenv) {
-	std::cout << getenv("PATH") << std::endl;
+
+    auto path = lemon::os::getenv("GSMAKE_HOME");
+
+    test_assert(std::get<1>(path));
+
+    std::cout << std::get<0>(path) << std::endl;
 }
 
 test_(lookup) {
+#ifdef WIN32
 	auto path = lookup("notepad");
+#else
+    auto path = lookup("ls");
+#endif
 
 	test_assert(std::get<1>(path));
 
 	std::cout << std::get<0>(path) << std::endl;
+
 }
 
 
@@ -23,5 +33,9 @@ test_(command) {
 
 	lemon::io::bytes buffIn,buffOut;
 
-	std::cout << "process exit :" << command("netstat").start({"-an"}).wait() << std::endl;
+    auto exitCode = command("ls").setstdin(&buffIn).setstdout(&buffOut).start({}).wait();
+
+    std::cout << "process exit :" << exitCode << std::endl;
+
+    std::cout << "buffer size :" << buffIn.buff().size() << std::endl;
 }

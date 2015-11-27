@@ -38,6 +38,11 @@ namespace lemon{ namespace io{
 		
 		int write(const_buffer buff,std::error_code & err) final;
 
+		const std::vector<uint8_t> buff() const
+        {
+            return _buff;
+        }
+
 	private:
 		size_t						_readoffset;
 		std::vector<uint8_t>		_buff;

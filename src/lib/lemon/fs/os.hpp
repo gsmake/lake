@@ -116,6 +116,64 @@ namespace lemon { namespace fs {
 
         return filepath::path(current_directory() + "/" + source).compress().string();
     }
+
+    /**
+     * read the directory child items
+     */
+    std::vector<std::string> read_directory(const std::string& path, std::error_code &err);
+
+    inline std::vector<std::string> read_directory(const std::string& path)
+    {
+        std::error_code err;
+
+        auto entries = read_directory(path,err);
+
+        if (err)
+        {
+            throw std::system_error(err);
+        }
+
+        return entries;
+    }
+
+
+    inline void remove_directories(const std::string & path, std::error_code &err)
+    {
+        auto entries = read_directory(path,err);
+
+        if(err)
+        {
+            return;
+        }
+
+        for(auto entry : entries)
+        {
+            if(entry == "." || entry == "..") continue;
+
+            auto child = filepath::path(path + "/" + entry).native();
+
+            if(is_directory(child))
+            {
+                remove_directories(child,err);
+
+                if(err)
+                {
+                    return;
+                }
+
+                continue;
+            }
+
+            remove_file(child,err);
+
+            if(err)
+            {
+                return;
+            }
+        }
+
+        remove_file(path,err);
+    }
 }}
 
 #endif //LEMON_FS_OS_HPP

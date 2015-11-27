@@ -240,7 +240,7 @@ namespace lemon{ namespace filepath{
 		{
 			if(rhs.abs())
 			{
-				throw std::runtime_error();
+				throw std::runtime_error("rhs can't be abs path");
 			}
 
 			_nodes.insert(_nodes.end(), rhs._nodes.begin(), rhs._nodes.end());

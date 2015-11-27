@@ -22,11 +22,11 @@ namespace lemon {namespace exec {
 		const std::string seperator = ";";
 		const std::string extend = ".exe";
 #else
-		const std::string seperator = ":";
+		const std::string delimiter = ":";
 		const std::string extend = "";
 #endif //WIN32
 
-		auto paths = strings::split(std::get<0>(path), seperator);
+		auto paths = strings::split(std::get<0>(path), delimiter);
 
 #ifdef WIN32
 		DWORD length = ::GetSystemDirectoryW(0, 0);
@@ -41,11 +41,11 @@ namespace lemon {namespace exec {
 
 		for(auto p : paths)
 		{
-			auto fullpath = (filepath::path(p) / (cmd + extend)).native();
+			auto fullPath = (filepath::path(p) / (cmd + extend)).native();
 			
-			if(fs::exists(fullpath))
+			if(fs::exists(fullPath))
 			{
-				return std::make_tuple(fullpath, true);
+				return std::make_tuple(fullPath, true);
 			}
 		}
 

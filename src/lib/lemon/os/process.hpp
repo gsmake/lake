@@ -8,6 +8,7 @@ namespace lemon{ namespace os{
 	class process : nocopy
 	{
 	public:
+		virtual ~ process(){}
 		virtual int wait() = 0;
 	};
 }}

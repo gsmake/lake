@@ -3,6 +3,8 @@
 #ifndef WIN32
 
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 namespace lemon { namespace fs{
 
@@ -72,6 +74,31 @@ namespace lemon { namespace fs{
         {
             err = std::make_error_code((std::errc)errno);
         }
+    }
+
+    std::vector<std::string> read_directory(const std::string& path, std::error_code &err)
+    {
+        auto dir = opendir(path.c_str());
+
+        if(dir == nullptr)
+        {
+            err = std::error_code(errno,std::system_category());
+
+            return {};
+        }
+
+        dirent *entry;
+
+        std::vector<std::string> entries;
+
+        while((entry = readdir(dir)) != nullptr)
+        {
+            entries.push_back(std::string(entry->d_name,entry->d_name + entry->d_namlen));
+        }
+
+        closedir(dir);
+
+        return entries;
     }
 }}
 
