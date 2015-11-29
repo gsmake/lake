@@ -1,149 +1,66 @@
 #ifndef LEMON_LOG_LOG_HPP
 #define LEMON_LOG_LOG_HPP
 
-#include <condition_variable>
-#include <thread>
-#include <string>
+#include <stdio.h>
 #include <cstdarg>
-#include <chrono>
-#include <mutex>
-#include <vector>
-#include <unordered_map>
-#include <lemon/nocopy.hpp>
+
+#include <lemon/log/sink.hpp>
+#include <lemon/log/logger.hpp>
+#include <lemon/log/factory.hpp>
 
 namespace lemon{ namespace log{
-    // log level enum
-    enum class level{
-        ERROR = 1, WARN = 2, INFO = 4, DEBUG = 8, TRACE = 16, VERBOSE = 32
-    };
+	
+	const logger& get(const std::string & name);
 
-    class logger;
+	void close();
 
-    class sink;
+	inline void write(const logger & source, level l,const char *file, int lines, const char *fmt,...)
+	{
+		va_list args;
 
-    struct message
-    {
-        level                                     LEVEL;
-        std::chrono::system_clock::time_point     TS;
-        std::string                               Source;
-        std::string                               File;
-        int                                       Lines;
-        std::string                               Content;
-    };
+		va_start(args,fmt);
 
-    class factory  :public nocopy
-    {
-    public:
+#ifdef WIN32
+		char buff[2048];
+		int len = vsnprintf_s(buff, sizeof(buff), fmt, args);
+#else
+		char *buff;
+		int len = vasprintf(&buff,sizeof(buff), fmt, args);
+#endif //WIN32
+		va_end(args);
 
-        factory();
-
-        void setlevel(level val);
-
-        void setsink(sink * val);
-
-        void write(const message & msg);
-
-        logger* get(const std::string & name);
-
-        level levels() const {
-            return _level;
-        }
-
-        void stop();
-
-    private:
-
-        void loop();
-
-    private:
-        bool                                        _exit;
-        level                                       _level;
-        std::mutex                                  _mutex;
-        std::condition_variable                     _cond;
-        std::condition_variable                     _condexit;
-        std::unordered_map<std::string,logger*>     _sources;
-        sink*                                       _sink;
-        std::vector<message>                        _queue;
-        std::thread                                 _workthread;
-    };
-
-    class sink
-    {
-    public:
-        virtual void write(const message & msg) = 0;
-    };
-
-    class console : public sink
-    {
-    public:
-        void write(const message & msg) final;
-    };
-
-
-    class logger : public nocopy
-    {
-    public:
-        logger(const std::string & name,factory & val)
-            :_name(name),_factory(val)
-        {}
-
-        level levels() const
-        {
-            return _factory.levels();
-        }
-
-        void write(level l,const std::string && content,const std::string && file,int lines);
-
-    private:
-        std::string     _name;
-        factory         &_factory;
-    };
-
-    logger* get(const std::string name);
-
-    void stop();
-
-    inline void log(logger *source, level level,const char* file,int lines,const char * message,...)
-    {
-        char buff[1024] = {0};
-
-        va_list args;
-
-        va_start(args,message);
+		source.write(l, std::string(buff, buff + len), file, lines);
 
 #ifndef WIN32
-        int len = vsprintf(buff,message,args);
-#endif
-        va_end(args);
-
-        source->write(level,std::string(buff,buff+len),std::string(file),lines);
-    }
+		free(buff);
+#endif //WIN32
+	}
 }}
 
-#define logE(logger,fmt,...) if((logger)->levels() >= lemon::log::level::ERROR) { \
-    lemon::log::log((logger),lemon::log::level::ERROR,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+#define lemonE(l,fmt,...) if(((l).levels() & (int)lemon::log::level::error) != 0) { \
+	lemon::log::write((l),lemon::log::level::error,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
 
-#define logW(logger,fmt,...) if((logger)->levels() >= lemon::log::level::WARN) { \
-    lemon::log::log((logger),lemon::log::level::WARN,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+#define lemonW(l,fmt,...) if(((l).levels() & (int)lemon::log::level::warn) != 0) { \
+	lemon::log::write((l),lemon::log::level::warn,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
 
-#define logI(logger,fmt,...) if((logger)->levels() >= lemon::log::level::INFO) { \
-    lemon::log::log((logger),lemon::log::level::INFO,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+#define lemonI(l,fmt,...) if(((l).levels() & (int)lemon::log::level::info) != 0) { \
+	lemon::log::write((l),lemon::log::level::info,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
 
-#define logD(logger,fmt,...) if((logger)->levels() >= lemon::log::level::DEBUG) { \
-    lemon::log::log((logger),lemon::log::level::DEBUG,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+#define lemonD(l,fmt,...) if(((l).levels() & (int)lemon::log::level::debug) != 0) { \
+	lemon::log::write((l),lemon::log::level::debug,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
 
-#define logT(logger,fmt,...) if((logger)->levels() >= lemon::log::level::TRACE) { \
-    lemon::log::log((logger),lemon::log::level::TRACE,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+
+#define lemonT(l,fmt,...) if(((l).levels() & (int)lemon::log::level::trace) != 0) { \
+	lemon::log::write((l),lemon::log::level::trace,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
 
-#define logV(logger,fmt,...) if((logger)->levels() >= lemon::log::level::VERBOSE) { \
-    lemon::log::log((logger),lemon::log::level::VERBOSE,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
+#define lemonV(l,fmt,...) if(((l).levels() & (int)lemon::log::level::verbose) != 0) { \
+	lemon::log::write((l),lemon::log::level::verbose,__FILE__,__LINE__,(fmt),##__VA_ARGS__);\
 }
-
 
 
 #endif //LEMON_LOG_LOG_HPP

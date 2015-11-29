@@ -19,7 +19,7 @@ namespace lemon {namespace exec {
 		}
 		
 #ifdef WIN32
-		const std::string seperator = ";";
+		const std::string delimiter = ";";
 		const std::string extend = ".exe";
 #else
 		const std::string delimiter = ":";

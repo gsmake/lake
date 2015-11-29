@@ -4,23 +4,19 @@
 
 #include <sstream>
 #include <iostream>
+#include <lemoon/lemoon.hpp>
 #include <lemon/fs/fs.hpp>
-#include <lemoon/fs/fs.hpp>
-#include <lemoon/log/log.hpp>
-#include <lemoon/os/os.hpp>
 #include <lemon/os/sysinfo.hpp>
-
+#include <lemon/log/log.hpp>
 
 int pmain(lua_State *L)
 {
+	
+	lua_pushcfunction(L, lemoon::luaopen_lemoon);
 
-    luaL_openlibs(L);
-
-    luaL_requiref(L, "__lemoon_fs", lemoon::fs::luaopen_fs, 1);
-
-    luaL_requiref(L, "__lemoon_os", lemoon::os::luaopen_os, 1);
-
-    luaL_requiref(L, "__lemoon_log", lemoon::log::luaopen_log, 1);
+	if (0 != lua_pcall(L, 0, 0, 0)) {
+		return luaL_error(L, lua_tostring(L, -1));
+	}
 
     auto path = lemon::os::getenv("GSMAKE_HOME");
 
@@ -33,7 +29,7 @@ int pmain(lua_State *L)
 
     std::stringstream stream;
 
-    stream << "package.path = package.path ..';" << home << "/runtimes/?.lua'";
+	stream << "package.path = package.path ..';" << home << "/runtimes/?.lua;" << home << "/runtimes/?/init.lua'";
 
     if(luaL_dostring(L,stream.str().c_str()))
     {
@@ -58,8 +54,10 @@ int main() {
     lua_pushcfunction(L, pmain);
 
     if (0 != lua_pcall(L, 0, 0, 0)) {
-        std::cout << "panic:\n" << lua_tostring(L,-1) << std::endl;
+		lemonE(lemon::log::get("lake"),"panic:\n\t%s", lua_tostring(L, -1));
     }
+
+	lemon::log::close();
 
     lua_close(L);
 }

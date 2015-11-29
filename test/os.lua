@@ -8,9 +8,9 @@
 
 local sys = require "lemoon.os"
 
-local exec = sys.exec("ls")
+local exec = sys.exec("netstat")
 
-exec:start()
+exec:start("--help")
 
 print("========")
 exec:wait()

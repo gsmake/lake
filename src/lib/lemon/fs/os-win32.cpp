@@ -114,6 +114,36 @@ namespace lemon {
 				err = std::error_code(GetLastError(), std::system_category());
 			}
 		}
+
+		std::vector<std::string> read_directory(const std::string& path, std::error_code &err)
+		{
+			convert conv;
+
+			WIN32_FIND_DATAW context;
+
+			HANDLE handler = NULL;
+
+			std::vector<std::string> entries;
+
+			auto target = conv.from_bytes(path + "/*");
+
+			if ((handler = FindFirstFileW(target.c_str(), &context)) == INVALID_HANDLE_VALUE) {
+				err = std::error_code(GetLastError(), std::system_category());
+
+				return entries;
+			}
+
+		
+
+			do {
+				entries.push_back(conv.to_bytes(context.cFileName));
+
+			} while (FindNextFileW(handler, &context));
+
+			FindClose(handler);
+
+			return entries;
+		}
 	}
 }
 

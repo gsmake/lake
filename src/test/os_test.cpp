@@ -33,7 +33,7 @@ test_(command) {
 
 	lemon::io::bytes buffIn,buffOut;
 
-    auto exitCode = command("ls").setstdin(&buffIn).setstdout(&buffOut).start({}).wait();
+    auto exitCode = command("netstat").setstdin(&buffIn).setstdout(&buffOut).start({"/help"}).wait();
 
     std::cout << "process exit :" << exitCode << std::endl;
 

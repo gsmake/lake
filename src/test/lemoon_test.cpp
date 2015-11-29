@@ -1,10 +1,8 @@
 #include <iostream>
-#include <lemoon/fs/fs.hpp>
-#include <lemoon/log/log.hpp>
-#include <lemoon/os/os.hpp>
+#include <lemon/fs/fs.hpp>
 #include <lemon/test/test.hpp>
 #include <lemon/os/sysinfo.hpp>
-#include <lemon/fs/fs.hpp>
+#include <lemoon/lemoon.hpp>
 
 namespace lemoon{ namespace test{
 
@@ -15,13 +13,11 @@ namespace lemoon{ namespace test{
         {
             L = luaL_newstate();
 
-            luaL_openlibs(L);
+			lua_pushcfunction(L, lemoon::luaopen_lemoon);
 
-            luaL_requiref(L, "__lemoon_fs", lemoon::fs::luaopen_fs, 1);
-
-            luaL_requiref(L, "__lemoon_os", lemoon::os::luaopen_os, 1);
-
-            luaL_requiref(L, "__lemoon_log", lemoon::log::luaopen_log, 1);
+			if (0 != lua_pcall(L, 0, 0, 0)) {
+				luaL_error(L, lua_tostring(L, -1));
+			}
 
             auto path = lemon::os::getenv("GSMAKE_HOME");
 

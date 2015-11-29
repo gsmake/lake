@@ -1,6 +1,3 @@
-local module = {}
-
-
 local class = {}
 
 function class:E(fmt,...)
@@ -31,18 +28,13 @@ function class:exit()
     __lemoon_log.exit()
 end
 
-function module.get(name)
+function class.ctor(name)
 
     local log = {}
 
     log.source = __lemoon_log.get(name)
 
-    setmetatable(log,{
-        __index = class;
-    })
-
     return log
 end
 
-
-return module
+return class

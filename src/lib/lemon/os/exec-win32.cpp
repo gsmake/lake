@@ -14,7 +14,7 @@ namespace lemon{namespace exec{
 		
 		win32_process(
 			const std::string path,
-			std::initializer_list<std::string> args,
+			std::vector<std::string> args,
 			const std::string workdir,
 			io::reader* _stdin, 
 			io::writer* _stdout,
@@ -154,7 +154,7 @@ namespace lemon{namespace exec{
 	};
 
 
-	command & command::start(std::initializer_list<std::string> args)
+	command & command::start(std::vector<std::string> args)
 	{
 		_process = new win32_process(_path, args, _workpath,_stdin, _stdout, _stderr, _env);
 

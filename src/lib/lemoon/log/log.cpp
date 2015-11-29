@@ -7,9 +7,9 @@ namespace lemoon{namespace log{
 
     int lua_get(lua_State *L)
     {
-        auto source = lemon::log::get(luaL_checkstring(L,1));
+        auto& source = lemon::log::get(luaL_checkstring(L,1));
 
-        lua_pushlightuserdata(L,source);
+        lua_pushlightuserdata(L,(void*)&source);
 
         return 1;
     }
@@ -18,7 +18,7 @@ namespace lemoon{namespace log{
     {
         luaL_checktype(L,1,LUA_TLIGHTUSERDATA);
 
-        auto source = (lemon::log::logger*)lua_touserdata(L,1);
+        auto source = (const lemon::log::logger*)lua_touserdata(L,1);
 
         auto msg = luaL_checkstring(L,3);
 
@@ -26,18 +26,18 @@ namespace lemoon{namespace log{
 
         lua_getstack(L,2, &debug);
 
-        lua_getinfo(L,"S", &debug);
+        lua_getinfo(L,"lS", &debug);
 
         auto file = lemon::filepath::path(debug.source + 1).leaf();
 
-        lemon::log::log(source,(lemon::log::level)luaL_checkinteger(L,2),file.c_str(),debug.currentline,msg);
+        source->write((lemon::log::level)luaL_checkinteger(L,2), msg,file.c_str(),debug.currentline);
 
         return 0;
     }
 
-    int lua_flush(lua_State *L)
+    int lua_log_close(lua_State *L)
     {
-        lemon::log::stop();
+        lemon::log::close();
 
         return 0;
     }
@@ -45,7 +45,7 @@ namespace lemoon{namespace log{
     static luaL_Reg funcs[] = {
         {"get",lua_get},
         {"log",lua_log},
-        {"exit",lua_flush},
+        {"close",lua_log_close},
         {NULL, NULL}
     };
 

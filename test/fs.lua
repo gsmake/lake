@@ -1,4 +1,5 @@
 local fs = require "lemoon.fs"
+local sys = require "lemoon.os"
 
 print(fs.abs("./"))
 
@@ -26,7 +27,11 @@ end
 
 fs.symlink(dir,dir_link)
 
-fs.dir("/usr/local/bin")
+if sys.host() == "Win32" or sys.host() == "Win64" then
+    fs.dir("c:/")
+else
+    fs.dir("/usr/local/bin")
+end
 
 print(fs.dir())
 
@@ -36,4 +41,3 @@ print(fs.exists("/usr/local2"))
 
 
 print(fs.abs("./"))
-
