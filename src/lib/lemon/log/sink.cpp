@@ -38,22 +38,23 @@ namespace lemon{ namespace log{
 #else
 		switch (msg.LEVEL)
 		{
-		case level::ERR:
+		case level::error:
 			std::cout << "\e[31m";
 			break;
-		case level::WARN:
+		case level::warn:
 			std::cout << "\e[35m";
 			break;
-		case level::INFO:
+		case level::info:
 			std::cout << "\e[37m";
 			break;
-		case level::DEBUG:
+		case level::debug:
 			std::cout << "\e[36m";
 			break;
-		case level::TRACE:
+		case level::trace:
 			std::cout << "\e[32m";
 			break;
-		case level::VERBOSE:
+		case level::verbose:
+		default:
 			std::cout << "\e[33m";
 			break;
 		}
@@ -68,7 +69,7 @@ namespace lemon{ namespace log{
 
 			<< tm->tm_hour << ":" << tm->tm_min << ":" << tm->tm_sec << " "
 
-			<< msg.Source << " (" << filepath::path(msg.File).leaf() << ":" << std::setw(4) << msg.Lines << ") " << msg.Content << std::endl;
+			<< msg.Source << " (" << filepath::path(msg.File).leaf() << ":" <<  msg.Lines << ") " << msg.Content << std::endl;
 
 
 #ifdef WIN32

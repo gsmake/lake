@@ -4,6 +4,10 @@
 
 #include <stdlib.h>
 
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif //
+
 namespace lemon { namespace os {
     typedef std::wstring_convert<std::codecvt<wchar_t, char, std::mbstate_t>, wchar_t> convert;
 
@@ -25,11 +29,11 @@ namespace lemon { namespace os {
     #elif defined(_AIX)
         return host_t::AIX;
     #elif defined(__APPLE__)
-    #if TARGET_IPHONE_SIMULATOR
+    #if TARGET_OS_SIMULATOR == 1
         return host_t::iOS_Simulator;
-    #elif TARGET_OS_IPHONE
+    #elif TARGET_OS_IPHONE == 1
         return host_t::iOS;
-    #elif TARGET_OS_MAC
+    #elif TARGET_OS_MAC == 1
         return host_t::OSX;
     #else
         return host_t::OSX_Unknown;

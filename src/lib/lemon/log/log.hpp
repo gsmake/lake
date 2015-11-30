@@ -1,8 +1,10 @@
 #ifndef LEMON_LOG_LOG_HPP
 #define LEMON_LOG_LOG_HPP
 
+
 #include <stdio.h>
 #include <cstdarg>
+#include <stdlib.h>
 
 #include <lemon/log/sink.hpp>
 #include <lemon/log/logger.hpp>
@@ -25,7 +27,7 @@ namespace lemon{ namespace log{
 		int len = vsnprintf_s(buff, sizeof(buff), fmt, args);
 #else
 		char *buff;
-		int len = vasprintf(&buff,sizeof(buff), fmt, args);
+		int len = vasprintf(&buff, fmt, args);
 #endif //WIN32
 		va_end(args);
 

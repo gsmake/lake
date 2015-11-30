@@ -13,7 +13,7 @@ namespace lemon{ namespace log{
 	{
 		while(!_exitflag)
 		{
-			std::unique_lock<std::shared_timed_mutex> lock(_mutex);
+			std::unique_lock<std::mutex> lock(_mutex);
 
 			if(_messages.empty())
 			{
@@ -37,7 +37,7 @@ namespace lemon{ namespace log{
 			}
 		}
 
-		std::unique_lock<std::shared_timed_mutex> lock(_mutex);
+		std::unique_lock<std::mutex> lock(_mutex);
 
 		auto messages = std::move(_messages);
 
@@ -56,7 +56,7 @@ namespace lemon{ namespace log{
 
 	void factory::write(const message &msg)
 	{
-		std::lock_guard<std::shared_timed_mutex> lock(_mutex);
+		std::lock_guard<std::mutex> lock(_mutex);
 
 		_messages.push_back(msg);
 
@@ -65,7 +65,7 @@ namespace lemon{ namespace log{
 
 	void factory::setlevels(int levels, const std::vector<std::string> &loggers)
 	{
-		std::lock_guard<std::shared_timed_mutex> lock(_mutex);
+		std::lock_guard<std::mutex> lock(_mutex);
 
 		if(loggers.empty())
 		{
@@ -96,14 +96,14 @@ namespace lemon{ namespace log{
 
 	void factory::add_sink(sink* s)
 	{
-		std::lock_guard<std::shared_timed_mutex> lock(_mutex);
+		std::lock_guard<std::mutex> lock(_mutex);
 
 		_sinks.insert(s);
 	}
 
 	void factory::remove_sink(sink* s)
 	{
-		std::lock_guard<std::shared_timed_mutex> lock(_mutex);
+		std::lock_guard<std::mutex> lock(_mutex);
 
 		_sinks.erase(s);
 	}
@@ -112,23 +112,15 @@ namespace lemon{ namespace log{
 	*/
 	const logger& factory::get(const std::string &name)
 	{
-		std::shared_lock<std::shared_timed_mutex> shared_lock(_mutex);
+		std::unique_lock<std::mutex> lock(_mutex);
 
 		if(_loggers.count(name) == 0)
 		{
-			shared_lock.unlock();
+			auto source = new logger(name, *this);
 
-			{
-				std::lock_guard<std::shared_timed_mutex> lock(_mutex);
+			source->levels(_levels);
 
-				auto source = new logger(name, *this);
-
-				source->levels(_levels);
-
-				_loggers[name] = source;
-			}
-
-			shared_lock.lock();
+			_loggers[name] = source;
 		}
 
 		return *_loggers[name];
@@ -139,7 +131,7 @@ namespace lemon{ namespace log{
 	*/
 	void factory::close()
 	{
-		std::unique_lock<std::shared_timed_mutex> lock(_mutex);
+		std::unique_lock<std::mutex> lock(_mutex);
 
 		if(!_exitflag)
 		{

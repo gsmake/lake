@@ -54,6 +54,7 @@ int main() {
     lua_pushcfunction(L, pmain);
 
     if (0 != lua_pcall(L, 0, 0, 0)) {
+
 		lemonE(lemon::log::get("lake"),"panic:\n\t%s", lua_tostring(L, -1));
     }
 

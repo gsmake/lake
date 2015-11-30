@@ -4,11 +4,11 @@ function module.new(name,...)
 
     local metatable = require(name)
 
-    local obj = nil
+    local obj
 
     if metatable.ctor ~= nil then
-
         obj = metatable.ctor(...)
+        assert(obj ~= nil,string.format("class(%s) ctor must return table val",name))
     else
         obj = {...}
     end
@@ -19,6 +19,21 @@ function module.new(name,...)
      })
 
     return obj
+end
+
+function module.clone(prototype)
+    local obj = {}
+
+    for k,v in pairs(prototype) do
+        obj.k = v
+    end
+
+    if getmetatable(prototype) ~= nil then
+        setmetatable(obj,getmetatable(prototype))
+    end
+
+    return obj
+
 end
 
 

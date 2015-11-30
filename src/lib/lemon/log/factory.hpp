@@ -1,11 +1,12 @@
 #ifndef LEMON_LOG_FACTORY_HPP
 #define LEMON_LOG_FACTORY_HPP
 
+#include <mutex>
 #include <atomic>
 #include <vector>
 #include <string>
 #include <thread>
-#include <shared_mutex>
+
 #include <unordered_map>
 #include <unordered_set>
 #include <condition_variable>
@@ -58,7 +59,7 @@ namespace lemon{ namespace log{
 
 	private:
 		int													_levels;
-		std::shared_timed_mutex								_mutex;
+		std::mutex          								_mutex;
 		std::unordered_map<std::string, logger*>			_loggers;
 		std::unordered_set<sink*>							_sinks;
 		std::atomic<bool>									_exitflag;

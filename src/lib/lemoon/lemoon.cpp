@@ -2,6 +2,8 @@
 #include <lemoon/fs/fs.hpp>
 #include <lemoon/log/log.hpp>
 #include <lemoon/os/os.hpp>
+#include <lemoon/regex/regex.hpp>
+
 
 #include <sqlite/lsqlite3.h>
 
@@ -18,6 +20,8 @@ namespace lemoon {
 		luaL_requiref(L, "__lemoon_log", lemoon::log::luaopen_log, 1);
 
 		luaL_requiref(L, "__lemoon_sqlite3", luaopen_lsqlite3,1);
+
+		luaL_requiref(L, "__lemoon_regex", lemoon::regex::luaopen_regex,1);
 
 		return 0;
 	}
