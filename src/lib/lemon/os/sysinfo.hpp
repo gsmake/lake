@@ -2,6 +2,7 @@
 #define LEMON_OS_SYSINFO_HPP
 #include <tuple>
 #include <string>
+#include <system_error>
 #include <lemon/config.h>
 
 namespace lemon{ namespace os{
@@ -22,7 +23,21 @@ namespace lemon{ namespace os{
 
 	std::string execute_suffix();
 
-	std::string tmpdir();
+	std::string tmpdir(std::error_code & err);
+
+	inline std::string tmpdir()
+	{
+		std::error_code err;
+
+		auto val = tmpdir(err);
+
+		if(err)
+		{
+			throw std::system_error(err);
+		}
+
+		return val;
+	}
 }}
 
 #endif //LEMON_OS_SYSINFO_HPP

@@ -1,3 +1,5 @@
+#include <mutex>
+
 #include <lemon/uuid.hpp>
 
 #include <lua/lua.hpp>

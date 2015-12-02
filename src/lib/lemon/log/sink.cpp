@@ -3,9 +3,12 @@
 #include <iomanip>
 #include <iostream>
 
+#include <lemon/config.h>
 #include <lemon/fs/fs.hpp>
 #include <lemon/log/sink.hpp>
 #include <lemon/log/logger.hpp>
+
+
 
 namespace lemon{ namespace log{
 

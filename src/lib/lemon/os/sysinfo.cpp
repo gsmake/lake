@@ -1,4 +1,4 @@
-#include <lemon/os/sysinfo.hpp>
+
 #include <locale>
 #include <vector>
 
@@ -7,6 +7,9 @@
 #ifdef __APPLE__
 #include <TargetConditionals.h>
 #endif //
+
+#include <lemon/config.h>
+#include <lemon/os/sysinfo.hpp>
 
 namespace lemon { namespace os {
     typedef std::wstring_convert<std::codecvt<wchar_t, char, std::mbstate_t>, wchar_t> convert;
@@ -92,7 +95,7 @@ namespace lemon { namespace os {
     }
 
 #ifndef WIN32
-    std::string tmpdir()
+    std::string tmpdir(std::error_code & )
     {
         auto val = getenv("TMPDIR");
 
@@ -106,5 +109,23 @@ namespace lemon { namespace os {
 
         return "/tmp";
     }
+#else
+
+
+	std::string tmpdir(std::error_code & err)
+	{
+		wchar_t buff[MAX_PATH + 1];
+
+		auto length = ::GetTempPathW(MAX_PATH, buff);
+
+		if(length == 0)
+		{
+			err = std::error_code(GetLastError(),std::system_category());
+
+			return "";
+		}
+
+		return convert().to_bytes(std::wstring(buff, buff + length));
+	}
 #endif
 }}
