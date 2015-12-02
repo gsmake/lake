@@ -1,8 +1,11 @@
-#include <lemoon/os/os.hpp>
+#include <iostream>
+
+#include <lua/lua.hpp>
+#include <lemon/log/log.hpp>
 #include <lemon/os/exec.hpp>
 #include <lemon/os/sysinfo.hpp>
-#include <iostream>
-#include <stdexcept>
+
+
 #define EXEC_CLASS_NAME "__lemoon_exec"
 
 namespace lemoon { namespace os{
@@ -46,6 +49,8 @@ namespace lemoon { namespace os{
             break;
         case  host_t::OSX_Unknown:
             lua_pushstring(L,"OSX_Unknown");
+        case host_t::Android:
+            lua_pushstring(L,"Android");
             break;
         }
 
@@ -90,13 +95,25 @@ namespace lemoon { namespace os{
 
         auto cmd = (command*) luaL_checkudata(L,1,EXEC_CLASS_NAME);
 
-        cmd->wait();
+        lua_pushinteger(L,cmd->wait());
+
+        return 1;
+    }
+
+    int exec_dir(lua_State *L)
+    {
+        using command = lemon::exec::command;
+
+        auto cmd = (command*) luaL_checkudata(L,1,EXEC_CLASS_NAME);
+
+        cmd->setdir(luaL_checkstring(L,2));
 
         return 0;
     }
 
     static luaL_Reg exec[] = {
         {"start",lua_exec_start},
+        {"dir",exec_dir},
         {"wait",lua_exec_wait},
         {NULL, NULL}
     };
@@ -137,9 +154,36 @@ namespace lemoon { namespace os{
         return 1;
     }
 
+    int lookup(lua_State *L)
+    {
+        auto result = lemon::exec::lookup(luaL_checkstring(L,1));
+
+        if(std::get<1>(result))
+        {
+            lua_pushboolean(L,true);
+
+            lua_pushstring(L,std::get<0>(result).c_str());
+
+            return 2;
+        }
+
+        lua_pushboolean(L,false);
+
+        return 1;
+    }
+
+    int tmpdir(lua_State *L)
+    {
+        lua_pushstring(L,lemon::os::tmpdir().c_str());
+
+        return 1;
+    }
+
     static luaL_Reg os[] = {
+        {"lookup",lookup},
         {"exec",lua_exec},
         {"host",hostname},
+        {"tmpdir",tmpdir},
         {NULL, NULL}
     };
 

@@ -1,7 +1,7 @@
 --
 -- this file is gsmake boostrap lua script file
 --
-local sys   = require "lemoon.os"
+local sys   = require "lemoon.sys"
 local class = require "lemoon.class"
 
 local lake = class.new("lake",{

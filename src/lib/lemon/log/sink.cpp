@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include <lemon/config.h>
 #include <lemon/fs/fs.hpp>
 #include <lemon/log/sink.hpp>
 #include <lemon/log/logger.hpp>
@@ -65,7 +64,7 @@ namespace lemon{ namespace log{
 		auto tm = std::gmtime(&ts);
 
 
-		std::cout << " " << tm->tm_year + 1900 << "-" << tm->tm_mon << "-" << tm->tm_mday << " "
+		std::cout << tm->tm_year + 1900 << "-" << tm->tm_mon << "-" << tm->tm_mday << " "
 
 			<< tm->tm_hour << ":" << tm->tm_min << ":" << tm->tm_sec << " "
 

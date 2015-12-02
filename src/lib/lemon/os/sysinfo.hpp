@@ -9,7 +9,7 @@ namespace lemon{ namespace os{
 	 * get the lemon host name
 	 */
 	enum class host_t {
-		Unknown,Win64,Win32,Linux,Solaris,HPUX,AIX,iOS_Simulator,iOS,OSX,OSX_Unknown
+		Unknown,Win64,Win32,Linux,Solaris,HPUX,AIX,iOS_Simulator,iOS,OSX,OSX_Unknown,Android
 	};
 
 	//
@@ -21,6 +21,8 @@ namespace lemon{ namespace os{
 	std::tuple<std::string,bool> getenv(const std::string&);
 
 	std::string execute_suffix();
+
+	std::string tmpdir();
 }}
 
 #endif //LEMON_OS_SYSINFO_HPP

@@ -4,6 +4,7 @@ CHECK_INCLUDE_FILES (sys/event.h LEMOON_KQUEUE_H)
 CHECK_INCLUDE_FILES (sys/epoll.h LEMOON_HAS_EPOLL_H)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lemon/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/lemon/config.h IMMEDIATE)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lemoon/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/lemoon/config.h IMMEDIATE)
 
 
 file(GLOB_RECURSE src_files *.c *.cpp *.cxx)

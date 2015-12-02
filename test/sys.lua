@@ -6,11 +6,11 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local sys = require "lemoon.os"
+local sys = require "lemoon.sys"
 
-local exec = sys.exec("netstat")
+local exec = sys.exec("ls")
 
-exec:start("--help")
+exec:start("-an")
 
 print("========")
 exec:wait()

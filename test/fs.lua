@@ -1,5 +1,5 @@
 local fs = require "lemoon.fs"
-local sys = require "lemoon.os"
+local sys = require "lemoon.sys"
 
 print(fs.abs("./"))
 

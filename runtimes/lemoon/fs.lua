@@ -1,1 +1,1 @@
-return __lemoon_fs
+return lemoon.fs()

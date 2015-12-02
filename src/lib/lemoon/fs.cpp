@@ -1,6 +1,8 @@
-#include <lemon/fs/fs.hpp>
-#include <lemoon/fs/fs.hpp>
 #include <iostream>
+
+#include <lua/lua.hpp>
+#include <lemoon/config.h>
+#include <lemon/fs/fs.hpp>
 
 namespace lemoon{namespace fs{
 
@@ -70,6 +72,18 @@ namespace lemoon{namespace fs{
     int mkdir(lua_State *L)
     {
         std::error_code err;
+
+        if(lua_type(L,2) == LUA_TBOOLEAN && lua_toboolean(L,2))
+        {
+            lemon::fs::create_directories(luaL_checkstring(L,1),err);
+
+            if(err)
+            {
+                return luaL_error(L,"[lemoon.fs] call emon::fs::create_directories error :%s",err.message().c_str());
+            }
+
+            return 0;
+        }
 
         lemon::fs::create_directory(luaL_checkstring(L,1),err);
 

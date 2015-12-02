@@ -1,1 +1,1 @@
-return __lemoon_sqlite3
+return lemoon.sqlite3()

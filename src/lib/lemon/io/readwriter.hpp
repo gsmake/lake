@@ -18,16 +18,29 @@ namespace lemon{ namespace io{
 	class reader : public nocopy
 	{ 
 	public:
-		virtual int read(buffer buff,std::error_code & err) = 0;
+		virtual size_t read(buffer buff,std::error_code & err) = 0;
 		virtual ~ reader() {}
 	};
+
+    class reader_close : public reader
+    {
+    public:
+        virtual void close() = 0;
+    };
 
 	class writer : public nocopy
 	{
 	public:
-		virtual int write(const_buffer buff, std::error_code & err) = 0;
+		virtual size_t write(const_buffer buff, std::error_code & err) = 0;
 		virtual ~ writer() {}
 	};
+
+
+    class writer_close : public writer
+    {
+    public:
+        virtual  void close() = 0;
+    };
 
 
 	class bytes :public reader,public writer
@@ -38,9 +51,9 @@ namespace lemon{ namespace io{
 
 		void reset();
 
-		int read(buffer buff,std::error_code & err) final;
-		
-		int write(const_buffer buff,std::error_code & err) final;
+        size_t read(buffer buff,std::error_code & err) final;
+
+        size_t write(const_buffer buff,std::error_code & err) final;
 
 		const std::vector<uint8_t> buff() const
         {
@@ -53,7 +66,7 @@ namespace lemon{ namespace io{
 	};
 
 
-	class pipe :public reader,public writer
+	class pipe :public reader_close,public writer_close
 	{
 	public:
 		
@@ -61,11 +74,14 @@ namespace lemon{ namespace io{
 
 		~pipe();
 
-		int read(buffer buff, std::error_code & err) final;
+        size_t read(buffer buff, std::error_code & err) final;
 
-		int write(const_buffer buff, std::error_code & err) final;
+        size_t write(const_buffer buff, std::error_code & err) final;
+
+        void close() final;
 
 	private:
+        bool                        _exit;
 		std::mutex					_mutex;
 		std::condition_variable		_condition;
 		std::vector<uint8_t>		_buff;

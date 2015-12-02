@@ -17,11 +17,15 @@ namespace lemon { namespace os {
     #ifdef WIN32
         #ifdef _WIN64
                 return host_t::Win64;
-    #else
+        #else
                 return host_t::Win32;
-    #endif
+        #endif
     #elif defined(__linux)
-        return host_t::Linux;
+        #ifdef __android
+            return host_t::Android;
+        #else
+            return host_t::Linux;
+        #endif
     #elif defined(__sun)
         return host_t::Solaris;
     #elif defined(__hppa)
@@ -86,4 +90,21 @@ namespace lemon { namespace os {
         return "";
     #endif
     }
+
+#ifndef WIN32
+    std::string tmpdir()
+    {
+        auto val = getenv("TMPDIR");
+
+        if(std::get<1>(val))
+        {
+            return std::get<0>(val);
+        }
+#ifdef __android
+        return "/data/local/tmp";
+#endif
+
+        return "/tmp";
+    }
+#endif
 }}

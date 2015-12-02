@@ -31,11 +31,9 @@ test_(lookup) {
 
 test_(command) {
 
-	lemon::io::bytes buffIn,buffOut;
+	lemon::io::pipe buffIn(1024),buffOut(1024);
 
-    auto exitCode = command("netstat").setstdin(&buffIn).setstdout(&buffOut).start({"/help"}).wait();
+    auto exitCode = command("git").setstdin(&buffIn).setstdout(&buffOut).start({"clone","a"}).wait();
 
     std::cout << "process exit :" << exitCode << std::endl;
-
-    std::cout << "buffer size :" << buffIn.buff().size() << std::endl;
 }

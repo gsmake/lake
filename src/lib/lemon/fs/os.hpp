@@ -56,7 +56,7 @@ namespace lemon { namespace fs {
     /**
      * create new directory with path
      */
-    void create_directory(const std::string& path, std::error_code &e);
+    void create_directory(const std::string& path, std::error_code &e) noexcept ;
 
     inline void create_directory(const std::string& path)
     {
@@ -68,6 +68,23 @@ namespace lemon { namespace fs {
         {
             throw std::system_error(ec);
         }
+    }
+
+    inline void create_directories(const std::string &path, std::error_code &err)
+    {
+        if(filepath::path(path).has_parent())
+        {
+            auto parent = filepath::path(path).parent().native();
+
+            if(!exists(parent))
+            {
+                create_directories(parent,err);
+
+                if(err) return;
+            }
+        }
+
+        create_directory(path,err);
     }
 
     /**

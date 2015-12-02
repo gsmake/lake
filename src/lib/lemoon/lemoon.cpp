@@ -1,28 +1,44 @@
 #include <lemoon/lemoon.hpp>
-#include <lemoon/fs/fs.hpp>
-#include <lemoon/log/log.hpp>
-#include <lemoon/os/os.hpp>
-#include <lemoon/regex/regex.hpp>
-
-
 #include <sqlite/lsqlite3.h>
 
+namespace lemoon { namespace fs{
+    int luaopen_fs(lua_State *L);
+}}
+
+namespace lemoon { namespace os{
+    int luaopen_os(lua_State *L);
+}}
+
+namespace lemoon { namespace log{
+    int luaopen_log(lua_State *L);
+}}
+
+namespace lemoon { namespace regex{
+    int luaopen_regex(lua_State *L);
+}}
+
+namespace lemoon { namespace uuid{
+	int luaopen_uuid(lua_State *L);
+}}
+
 namespace lemoon {
+
+    static luaL_Reg funcs[] = {
+        {"fs",lemoon::fs::luaopen_fs},
+        {"sys",lemoon::os::luaopen_os},
+        {"log",lemoon::log::luaopen_log},
+        {"sqlite3",luaopen_lsqlite3},
+        {"regex",lemoon::regex::luaopen_regex},
+		{"uuid",lemoon::uuid::luaopen_uuid},
+        {NULL, NULL}
+    };
 
 	int luaopen_lemoon(lua_State *L)
 	{
 		luaL_openlibs(L);
 
-		luaL_requiref(L, "__lemoon_fs", lemoon::fs::luaopen_fs, 1);
+        luaL_newlib(L,funcs);
 
-		luaL_requiref(L, "__lemoon_os", lemoon::os::luaopen_os, 1);
-
-		luaL_requiref(L, "__lemoon_log", lemoon::log::luaopen_log, 1);
-
-		luaL_requiref(L, "__lemoon_sqlite3", luaopen_lsqlite3,1);
-
-		luaL_requiref(L, "__lemoon_regex", lemoon::regex::luaopen_regex,1);
-
-		return 0;
+		return 1;
 	}
 }

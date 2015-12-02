@@ -96,7 +96,7 @@ namespace lemon {namespace exec {
 	/**
 	* set the stdin reader
 	*/
-	command & command::setstdin(io::reader *reader)
+	command & command::setstdin(io::reader_close *reader)
 	{
 		this->_stdin = reader;
 		return *this;
@@ -104,7 +104,7 @@ namespace lemon {namespace exec {
 	/**
 	* set the stdout writer
 	*/
-	command & command::setstdout(io::writer * writer)
+	command & command::setstdout(io::writer_close * writer)
 	{
 		this->_stdout = writer;
 		return *this;
@@ -113,7 +113,7 @@ namespace lemon {namespace exec {
 	/**
 	* set the stderr writer
 	*/
-	command & command::setstderr(io::writer * writer)
+	command & command::setstderr(io::writer_close * writer)
 	{
 		this->_stderr = writer;
 		return *this;

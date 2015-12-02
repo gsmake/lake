@@ -104,4 +104,20 @@ function module:query_sync(name,version)
     return "",false
 end
 
+function module:save_sync(name,version,source,path,sync)
+
+    local SQL = string.format('insert into _SYNC VALUES("%s","%s","%s","%s","%s")',name,path,source,version,sync)
+
+    sqlexec(self.globaldb,SQL)
+
+end
+
+function module:save_source(name,version,source,path)
+
+    local SQL = string.format('insert into _SOURCE VALUES("%s","%s","%s","%s")',name,path,source,version)
+
+    sqlexec(self.globaldb,SQL)
+
+end
+
 return module

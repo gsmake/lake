@@ -51,7 +51,7 @@ namespace lemon { namespace fs{
         return false;
     }
 
-    void create_directory(const std::string& path, std::error_code &err)
+    void create_directory(const std::string& path, std::error_code &err) noexcept
     {
         if(mkdir(path.c_str(), ACCESSPERMS) != 0)
         {

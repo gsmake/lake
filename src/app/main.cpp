@@ -11,12 +11,10 @@
 
 int pmain(lua_State *L)
 {
-	
-	lua_pushcfunction(L, lemoon::luaopen_lemoon);
 
-	if (0 != lua_pcall(L, 0, 0, 0)) {
-		return luaL_error(L, lua_tostring(L, -1));
-	}
+    luaL_openlibs(L);
+
+    luaL_requiref(L,"lemoon",lemoon::luaopen_lemoon,1);
 
     auto path = lemon::os::getenv("GSMAKE_HOME");
 

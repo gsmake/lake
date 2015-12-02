@@ -14,6 +14,12 @@ namespace lemon{ namespace io{
 		const void		*data;
 		size_t			length;
 	};
+
+    template<size_t N>
+	inline buffer buff(char (&source)[N])
+    {
+        return {source,N};
+    }
 }}
 
 #endif //LEMON_IO_BUFF_HPP

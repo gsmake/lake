@@ -63,6 +63,21 @@ namespace lemon{ namespace filepath{
             return basic_path(_volume,nodes,_endWithSeparator);
         }
 
+        bool has_parent() const
+        {
+            if(_nodes.empty())
+            {
+                return false;
+            }
+
+            if(_nodes.size() == 1 && _nodes[0] == string_type(1,CharType('.')))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         bool abs() const
         {
             if(_nodes.empty())

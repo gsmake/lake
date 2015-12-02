@@ -1,3 +1,5 @@
+local __lemoon_log = lemoon.log()
+
 local class = {}
 
 function class:E(fmt,...)

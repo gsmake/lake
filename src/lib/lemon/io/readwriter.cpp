@@ -14,7 +14,7 @@ namespace lemon {namespace io{
 		_buff.clear();
 	}
 
-	int bytes::read(buffer buff, std::error_code & err)
+    size_t bytes::read(buffer buff, std::error_code & err)
 	{
 		size_t readlen = buff.length;
 
@@ -32,7 +32,7 @@ namespace lemon {namespace io{
 		return readlen;
 	}
 
-	int bytes::write(const_buffer buff, std::error_code & err)
+    size_t bytes::write(const_buffer buff, std::error_code & err)
 	{
 		size_t writelen = buff.length;
 
@@ -42,7 +42,7 @@ namespace lemon {namespace io{
 	}
 
 	pipe::pipe(size_t buffsize)
-		:_readoffset(0),_writeoffset(0)
+		:_readoffset(0),_writeoffset(0),_exit(false)
 	{
 		_buff.resize(buffsize);
 	}
@@ -52,13 +52,27 @@ namespace lemon {namespace io{
 
 	}
 
-	int pipe::read(buffer buff, std::error_code & err) 
+    size_t pipe::read(buffer buff, std::error_code & err)
 	{
 		std::unique_lock<std::mutex> lock(_mutex);
+
+        if(_exit)
+        {
+            err = std::make_error_code(std::errc::broken_pipe);
+
+            return 0;
+        }
 
 		while(_readoffset == _writeoffset)
 		{
 			_condition.wait(lock);
+
+            if(_exit)
+            {
+                err = std::make_error_code(std::errc::broken_pipe);
+
+                return 0;
+            }
 		}
 
 		auto readoffset = _readoffset % _buff.size();
@@ -83,18 +97,34 @@ namespace lemon {namespace io{
 			memcpy(buff.data, &_buff[readoffset], readsize);
 		}
 
+        _readoffset += readsize;
+
 		_condition.notify_all();
 
 		return readsize;
 	}
 
-	int pipe::write(const_buffer buff, std::error_code & err) 
+    size_t pipe::write(const_buffer buff, std::error_code & err)
 	{
 		std::unique_lock<std::mutex> lock(_mutex);
+
+        if(_exit)
+        {
+            err = std::make_error_code(std::errc::broken_pipe);
+
+            return 0;
+        }
 
 		while(_writeoffset - _readoffset == _buff.size())
 		{
 			_condition.wait(lock);
+
+            if(_exit)
+            {
+                err = std::make_error_code(std::errc::broken_pipe);
+
+                return 0;
+            }
 		}
 
 		auto writeoffset = _writeoffset % _buff.size();
@@ -119,8 +149,20 @@ namespace lemon {namespace io{
 			memcpy(&_buff[writeoffset], buff.data, writesize);
 		}
 
+        _writeoffset += writesize;
+
 		_condition.notify_all();
 
 		return writesize;
+	}
+
+	void pipe::close()
+	{
+        std::unique_lock<std::mutex> lock(_mutex);
+
+        if(!_exit){
+            _exit = true;
+            _condition.notify_all();
+        }
 	}
 }}

@@ -1,2 +1,2 @@
-return __lemoon_regex
+return lemoon.regex()
 

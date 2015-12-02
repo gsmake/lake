@@ -32,6 +32,8 @@ local function loadConfig(package,configPath)
         return plugin
     end
 
+    env.task = {}
+
     local closure,err = loadfile(configPath,"bt",env)
 
     if err ~= nil then

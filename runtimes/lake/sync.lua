@@ -19,22 +19,34 @@ end
 
 function module:sync_remote(package)
 
-    logger:I("sync remote :%s",package.Name)
+    logger:I("sync package <%s> ... ",package.Name)
 
-    for name,remote in pairs(remotes) do
-
-        logger:V("%s",remote.Pattern)
+    for _,remote in pairs(remotes) do
 
         local url = regex.gsub(package.Name,remote.Pattern,remote.URL)
 
-        logger:V("replace :%s",url)
-
         if url ~= package.Name then
-            logger:I("wellknown remote :%s",name)
+
+            logger:I("sync(%s) %s",remote.Sync,url)
+
+            local executorName = string.format("lake.sync.%s",remote.Sync)
+
+            local ok, executor = pcall(class.new,executorName,self.lake,package)
+
+            if not ok then
+                error(string.format("load sync executor %s err :\n\t%s",executorName,executor))
+            end
+
+            executor:sync_remote(url)
+
+
+            logger:I("sync(%s) %s -- success",remote.Sync,url)
+
+            return
         end
     end
 
-    logger:I("sync_remote")
+    logger:I("sync package <%s> -- failed, unsupport remote site",package.Name)
 end
 
 

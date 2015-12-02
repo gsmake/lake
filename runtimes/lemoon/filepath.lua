@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local sys = require "lemoon.os"
+local sys = require "lemoon.sys"
 local fs = require "lemoon.fs"
 
 local module = {}

@@ -13,11 +13,9 @@ namespace lemoon{ namespace test{
         {
             L = luaL_newstate();
 
-			lua_pushcfunction(L, lemoon::luaopen_lemoon);
+            luaL_openlibs(L);
 
-			if (0 != lua_pcall(L, 0, 0, 0)) {
-				luaL_error(L, lua_tostring(L, -1));
-			}
+            luaL_requiref(L,"lemoon",lemoon::luaopen_lemoon,1);
 
             auto path = lemon::os::getenv("GSMAKE_HOME");
 
@@ -59,10 +57,10 @@ namespace lemoon{ namespace test{
 
 
 test_(fs) {
-    lemoon::test::T("fs.lua");
+    //lemoon::test::T("fs.lua");
 }
 
 
 test_(os) {
-    lemoon::test::T("os.lua");
+    //lemoon::test::T("sys.lua");
 }

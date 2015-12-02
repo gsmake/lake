@@ -23,16 +23,16 @@ namespace lemon{ namespace exec{
 		/**
 		 * set the stdin reader
 		 */
-		command & setstdin(io::reader *reader);
+		command & setstdin(io::reader_close *reader);
 		/**
 		 * set the stdout writer
 		 */
-		command & setstdout(io::writer * writer);
+		command & setstdout(io::writer_close * writer);
 
 		/**
 		* set the stderr writer
 		*/
-		command & setstderr(io::writer * writer);
+		command & setstderr(io::writer_close * writer);
 		/**
 		 * set the child process env
 		 */
@@ -49,14 +49,13 @@ namespace lemon{ namespace exec{
 			return *this;
 		}
 
-
 		command & setdir(const std::string & dir);
 
 	private:
 		std::string							_path; // command fullpath
-		io::reader*							_stdin;
-		io::writer*							_stdout;
-		io::writer*							_stderr;
+		io::reader_close*					_stdin;
+		io::writer_close*					_stdout;
+		io::writer_close*					_stderr;
 		std::vector<std::string>			_env;
 		std::string							_workpath;
 		os::process*						_process;

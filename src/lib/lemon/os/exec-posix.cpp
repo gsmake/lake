@@ -1,11 +1,13 @@
 #include <lemon/os/exec.hpp>
 
 #ifndef WIN32
-#include <vector>
+
+#include <thread>
 #include <iostream>
-#include <sys/types.h>
-#include <sys/wait.h>
+
+
 #include <lemon/fs/os.hpp>
+#include <lemon/log/log.hpp>
 
 
 namespace lemon{ namespace exec{
@@ -15,13 +17,13 @@ namespace lemon{ namespace exec{
     public:
         posix_process(
             const std::string &path,
-            std::vector<std::string> args,
+            const std::vector<std::string> &args,
             const std::string workdir,
-            io::reader* _stdin,
-            io::writer* _stdout,
-            io::writer* _stderr,
+            io::reader_close* _stdin,
+            io::writer_close* _stdout,
+            io::writer_close* _stderr,
             const std::vector<std::string> &env)
-            :_stdin(nullptr),_stdout(nullptr),_stderr(nullptr)
+            :_path(path),_stdin(nullptr),_stdout(nullptr),_stderr(nullptr),_logger(lemon::log::get("exec"))
         {
 
 
@@ -54,8 +56,8 @@ namespace lemon{ namespace exec{
                 }
             }
 
-            _pid = fork();
 
+            _pid = fork();
 
             switch (_pid)
             {
@@ -65,11 +67,11 @@ namespace lemon{ namespace exec{
                 // child process
                 try
                 {
-                    exec(path,workdir,args,env);
+                    exec(path,args,workdir,env);
                 }
                 catch(const std::exception e)
                 {
-                    std::cout << "catche err :" << e.what() << std::endl;
+                    lemonE(_logger,"catch error :%s",e.what());
                     exit(1);
                 }
 
@@ -89,8 +91,8 @@ namespace lemon{ namespace exec{
 
         void exec(
             const std::string &path,
-            const std::string workdir,
-            std::vector<std::string> args,
+            const std::vector<std::string>& args,
+            const std::string &workdir,
             const std::vector<std::string> &env)
         {
 
@@ -133,16 +135,20 @@ namespace lemon{ namespace exec{
                 fs::set_current_directory(workdir);
             }
 
-            std::vector<const char *> argv;
+            const char ** argv = new const char*[args.size() + 2];
 
-            argv.push_back(path.c_str());
+            argv[0] = path.c_str();
 
-            for(auto arg : args)
+            int i = 1;
+
+            for(auto &arg : args)
             {
-                argv.push_back(arg.c_str());
+                argv[i] = arg.c_str();
+
+                i ++;
             }
 
-            argv.push_back(NULL);
+            argv[i] = NULL;
 
             std::vector<const char *> envp;
 
@@ -155,7 +161,7 @@ namespace lemon{ namespace exec{
 
             if (-1 == execve(
                 path.c_str(),
-                (char*const*)&argv[0],
+                (char*const*)argv,
                 (char*const*)&envp[0]))
             {
                 throw  std::system_error(errno,std::system_category(),path);
@@ -166,27 +172,34 @@ namespace lemon{ namespace exec{
         {
             int status = 0;
 
-            if (::waitpid(_pid,&status,0) == -1)
-            {
-                if (errno != ECHILD)
-                {
-                    std::cout << errno << std::endl;
+            pid_t ret;
 
-                    throw  std::system_error(errno,std::system_category());
-                }
+            do{
+
+               ret = ::waitpid(_pid, &status, 0);
+
+            } while ((ret == -1 && errno == EINTR) || (ret != -1 && !WIFEXITED(status)));
+
+            if (ret == -1 && errno != ECHILD)
+            {
+                auto err = std::error_code(errno,std::system_category());
+                lemonE(_logger,"catch error :%s", err.message().c_str())
+                throw  std::system_error(err);
             }
 
             return WEXITSTATUS(status);
         }
 
     private:
-        pid_t               _pid;
-        int                 _pipeIn[2];
-        int                 _pipeOut[2];
-        int                 _pipeErr[2];
-        io::reader*         _stdin;
-        io::writer*         _stdout;
-        io::writer*         _stderr;
+        std::string                 _path;
+        pid_t                       _pid;
+        int                         _pipeIn[2];
+        int                         _pipeOut[2];
+        int                         _pipeErr[2];
+        io::reader_close*           _stdin;
+        io::writer_close*           _stdout;
+        io::writer_close*           _stderr;
+        const lemon::log::logger    &_logger;
     };
 
 
