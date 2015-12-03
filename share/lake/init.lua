@@ -46,6 +46,7 @@ function module.ctor(config)
 
     lake.Database  = class.new("lake.db",lake)      -- create new database
     lake.Sync      = class.new("lake.sync",lake)    -- create new sync service
+    lake.Runner    = class.new("lake.runner",lake);
 
     logger:I("start lake -- success")
 
@@ -54,6 +55,25 @@ end
 
 function module:run()
     self.loader = class.new("lake.loader",self)
+
+    -- set bootstrap plugin
+
+    local _,ok = self.Database:query_install("github.com/gsmake/clang","bootstrap")
+
+    if not ok then
+        local clangPath = filepath.join(self.GSMAKE_HOME,"share","lake","plugin","clang")
+
+        self.Database:save_install("github.com/gsmake/clang","bootstrap",clangPath,clangPath)
+    end
+
+    local _,ok = self.Database:query_install("github.com/gsmake/lua","bootstrap")
+
+    if not ok then
+        local luaPath = filepath.join(self.GSMAKE_HOME,"share","lake","plugin","lua")
+
+        self.Database:save_install("github.com/gsmake/lua","bootstrap",luaPath,luaPath)
+    end
+
     self.loader:load(self.Workspace)
 end
 

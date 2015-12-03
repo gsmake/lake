@@ -160,7 +160,7 @@ function module.clean(path)
 
     local vollen = volume_name_length(path)
 
-    original = path
+    local original = path
 
     path = path:sub(vollen + 1)
 

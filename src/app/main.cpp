@@ -27,7 +27,7 @@ int pmain(lua_State *L)
 
     std::stringstream stream;
 
-	stream << "package.path = package.path ..';" << home << "/runtimes/?.lua;" << home << "/runtimes/?/init.lua'";
+	stream << "package.path = '" << home << "/share/?.lua;" << home << "/share/?/init.lua'";
 
     if(luaL_dostring(L,stream.str().c_str()))
     {
@@ -35,7 +35,7 @@ int pmain(lua_State *L)
     }
 
 
-    auto mainFile = lemon::filepath::path(home + "/runtimes/main.lua");
+    auto mainFile = lemon::filepath::path(home + "/share/main.lua");
 
     if(luaL_dofile(L,mainFile.slash().c_str()))
     {

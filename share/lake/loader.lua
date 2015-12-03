@@ -8,7 +8,8 @@ local module = {}
 
 
 -- load lake module by module local fs path
-function module:load(path)
+-- @flag true auto load the package's dependency,otherwise only load package metadata
+function module:load(path,name,version)
     logger:I("loading package :%s",path)
 
     -- check loading DCG
@@ -17,7 +18,11 @@ function module:load(path)
 
     local checkPath = ""
 
-    local package = class.new("lake.package",self,path)
+    local package = class.new("lake.package",self,path,name,version)
+
+    if self.packages[package.Name] ~= nil then
+        return
+    end
 
     for _,v in pairs(checkerOfDCG) do
         if v.Name == package.Name or #checkPath ~= 0 then
@@ -29,6 +34,8 @@ function module:load(path)
         error(string.format("circular package import :\n%s\t%s",checkPath,package.Name))
     end
 
+    package:load()
+
     logger:I("loading package :%s -- success",path)
 
     return package
@@ -39,6 +46,7 @@ function module.ctor(lake)
     {
         lake            = lake;
         checkerOfDCG    = {};
+        packages        = {};
     }
 
     return obj

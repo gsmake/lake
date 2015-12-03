@@ -26,6 +26,8 @@ namespace lemon{ namespace log{
 
 			auto messages = std::move(_messages);
 
+			_messages.clear();
+
 			lock.unlock();
 
 			for(auto& msg : messages)

@@ -25,7 +25,7 @@ function module.clone(prototype)
     local obj = {}
 
     for k,v in pairs(prototype) do
-        obj.k = v
+        obj[k] = v
     end
 
     if getmetatable(prototype) ~= nil then

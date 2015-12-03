@@ -179,6 +179,7 @@ namespace lemoon { namespace os{
         return 1;
     }
 
+
     static luaL_Reg os[] = {
         {"lookup",lookup},
         {"exec",lua_exec},

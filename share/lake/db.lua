@@ -31,7 +31,7 @@ function module.ctor(lake)
     sqlexec(obj.localdb, [[
         create table if not exists _INSTALL
         (
-           _NAME        TEXT PRIMARY KEY,
+           _NAME        TEXT,
            _PATH        TEXT,
            _SOURCE      TEXT,
            _VERSION     TEXT,
@@ -47,7 +47,7 @@ function module.ctor(lake)
 
         create table if not exists _SOURCE
         (
-           _NAME        TEXT PRIMARY KEY,
+           _NAME        TEXT,
            _PATH        TEXT,
            _SOURCE      TEXT,
            _VERSION     TEXT
@@ -102,6 +102,14 @@ function module:query_sync(name,version)
     end
 
     return "",false
+end
+
+function module:save_install(name,version,source,path)
+
+    local SQL = string.format('insert into _INSTALL VALUES("%s","%s","%s","%s","%s")',name,path,source,version,self.lake.GSMAKE_TARGET_HOST)
+
+    sqlexec(self.localdb,SQL)
+
 end
 
 function module:save_sync(name,version,source,path,sync)
