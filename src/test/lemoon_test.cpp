@@ -28,7 +28,7 @@ namespace lemoon{ namespace test{
 
             std::stringstream stream;
 
-            stream << "package.path = package.path ..';" << home << "/share/?.lua;" << home << "/test/?.lua'";
+            stream << "package.path = package.path ..';" << home << "/lib/?.lua;" << home << "/test/?.lua'";
 
             if(luaL_dostring(L,stream.str().c_str()))
             {

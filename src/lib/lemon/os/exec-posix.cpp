@@ -159,10 +159,9 @@ namespace lemon{ namespace exec{
 
             envp.push_back(NULL);
 
-            if (-1 == execve(
+            if (-1 == execv(
                 path.c_str(),
-                (char*const*)argv,
-                (char*const*)&envp[0]))
+                (char*const*)argv))
             {
                 throw  std::system_error(errno,std::system_category(),path);
             }

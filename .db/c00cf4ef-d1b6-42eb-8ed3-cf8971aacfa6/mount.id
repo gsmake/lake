@@ -1,0 +1,10 @@
+{
+	"golang/github.com/gsmake/gsmake.anonymous": {
+		"Src": "file:///var/folders/cw/0thy4f897mbfpl6jyfkc8dgw0000gn/T/9f291a87-54c1-411c-a09b-5495bae82df4?version=current",
+		"Target": "gsmake://github.com/gsmake/gsmake.anonymous?domain=golang"
+	},
+	"task/github.com/gsmake/gsmake.anonymous": {
+		"Src": "file:///var/folders/cw/0thy4f897mbfpl6jyfkc8dgw0000gn/T/9f291a87-54c1-411c-a09b-5495bae82df4?version=current",
+		"Target": "gsmake://github.com/gsmake/gsmake.anonymous?domain=task"
+	}
+}

@@ -27,7 +27,7 @@ int pmain(lua_State *L)
 
     std::stringstream stream;
 
-	stream << "package.path = '" << home << "/share/?.lua;" << home << "/share/?/init.lua'";
+	stream << "package.path = '" << home << "/lib/gsmake/?.lua;" << home << "/lib/gsmake/?/init.lua'";
 
     if(luaL_dostring(L,stream.str().c_str()))
     {
@@ -35,7 +35,7 @@ int pmain(lua_State *L)
     }
 
 
-    auto mainFile = lemon::filepath::path(home + "/share/main.lua");
+    auto mainFile = lemon::filepath::path(home + "/lib/gsmake/main.lua");
 
     if(luaL_dofile(L,mainFile.slash().c_str()))
     {
@@ -45,18 +45,36 @@ int pmain(lua_State *L)
     return 0;
 }
 
-int main() {
+static void createargtable(lua_State *L, char **argv, int argc) {
+    int i, narg;
+    narg = argc - 1; /* number of positive indices */
+    lua_createtable(L, narg, 0);
+    for (i = 1; i < argc; i++) {
+        lua_pushstring(L, argv[i]);
+        lua_rawseti(L, -2, i);
+    }
+
+    lua_setglobal(L, "arg");
+}
+
+int main(int args, char** argv) {
 
     lua_State *L = luaL_newstate();
+
+    createargtable(L, argv, args);
 
     lua_pushcfunction(L, pmain);
 
     if (0 != lua_pcall(L, 0, 0, 0)) {
 
 		lemonE(lemon::log::get("lake"),"panic:\n\t%s", lua_tostring(L, -1));
+
+        lemon::log::close();
+
+        return 1;
     }
 
-	lemon::log::close();
+    lemon::log::close();
 
     lua_close(L);
 }
