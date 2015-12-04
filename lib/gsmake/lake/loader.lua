@@ -19,15 +19,11 @@ function module.ctor(lake)
     return obj
 end
 
-function module:load(path,name,version,metadata)
-
+function module:load(path,name,version)
 
     local package = class.new("lake.package",self.lake,path,name,version)
-
-    if not metadata then package:load() end
 
     return package
 end
 
 return module
-

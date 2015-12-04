@@ -36,18 +36,35 @@ function module.ctor(lake,path,name,version)
     return obj
 end
 
-function module:load()
+function module:link()
 
     logger:I("load package [%s:%s] ... ",self.Name,self.Version)
+
+    for _,plugin in pairs(self.Plugins) do
+
+        -- install dependency plugin
+        logger:D("[%s:%s] load and link plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
+
+        local package = plugin:load()
+
+        package:link()
+
+        logger:D("[%s:%s] load and link plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
+    end
+
+
+    logger:I("load package [%s:%s] -- success ",self.Name,self.Version)
+end
+
+function module:setup()
 
     local gsmakePath = filepath.join(self.lake.Config.GSMAKE_HOME,"bin","gsmake",sys.EXE_NAME)
 
     for _,plugin in pairs(self.Plugins) do
 
-        -- install dependency plugin
-        logger:D("[%s:%s] install plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
+        logger:D("[%s:%s] link plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
 
-        local package = plugin:load()
+        local package = plugin.Package
 
         local exec = sys.exec(gsmakePath)
 
@@ -59,16 +76,15 @@ function module:load()
             error(string.format("[%s:%s] install plugin [%s:%s] -- failed",self.Name,self.Version,plugin.Name,plugin.Version))
         end
 
+        logger:D("[%s:%s] link plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
+
+        logger:D("[%s:%s] setup plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
+
         plugin:setup()
 
-        logger:D("[%s:%s] install plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
+        logger:D("[%s:%s] setup plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
     end
-
-
-    logger:I("load package [%s:%s] -- success ",self.Name,self.Version)
 end
 
 
-
 return module
-

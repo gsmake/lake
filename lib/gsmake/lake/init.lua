@@ -76,7 +76,7 @@ function module:run()
         local path = filepath.join(pluginDir,entry)
 
         if fs.exists(filepath.join(path,self.Config.GSMAKE_FILE)) then
-            local package = self.Loader:load(path,nil,nil,true)
+            local package = self.Loader:load(path)
             self.DB:save_source(package.Name,package.Version,path,path,true)
         end
     end)
@@ -91,4 +91,3 @@ function module:run()
 end
 
 return module
-

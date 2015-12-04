@@ -13,6 +13,9 @@ function module.ctor(package)
         checkerOfDCG    = {};
     }
 
+    package:link()
+    package:setup()
+
     return obj
 end
 
@@ -124,4 +127,3 @@ end
 
 
 return module
-
