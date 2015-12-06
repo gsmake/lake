@@ -64,30 +64,6 @@ namespace lemon{ namespace io{
 		size_t						_readoffset;
 		std::vector<uint8_t>		_buff;
 	};
-
-
-	class pipe :public reader_close,public writer_close
-	{
-	public:
-		
-		pipe(size_t buffsize);
-
-		~pipe();
-
-        size_t read(buffer buff, std::error_code & err) final;
-
-        size_t write(const_buffer buff, std::error_code & err) final;
-
-        void close() final;
-
-	private:
-        bool                        _exit;
-		std::mutex					_mutex;
-		std::condition_variable		_condition;
-		std::vector<uint8_t>		_buff;
-		size_t						_readoffset;
-		size_t						_writeoffset;
-	};
 }}
 
 #endif //LEMON_IO_RW_HPP

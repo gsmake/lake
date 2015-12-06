@@ -13,6 +13,12 @@ namespace lemon{ namespace io{
 	{
 		const void		*data;
 		size_t			length;
+
+		const_buffer(buffer buff)
+		{
+			data	= buff.data;
+			length	= buff.length;
+		}
 	};
 
     template<size_t N>

@@ -6,8 +6,6 @@
 #include <lemon/fs/filepath.hpp>
 
 namespace lemon { namespace fs {
-
-
     /**
      * return program current work directory
      */

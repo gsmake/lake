@@ -31,9 +31,9 @@ test_(lookup) {
 
 test_(command) {
 
-	lemon::io::pipe buffIn(1024),buffOut(1024);
+	/*lemon::io::pipe buffIn(1024),buffOut(1024);
 
     auto exitCode = command("git").setstdin(&buffIn).setstdout(&buffOut).start({"clone","a"}).wait();
 
-    std::cout << "process exit :" << exitCode << std::endl;
+    std::cout << "process exit :" << exitCode << std::endl;*/
 }
