@@ -54,7 +54,7 @@ namespace lemon {namespace exec {
 
 
 	command::command(const std::string & name)
-		:_process(nullptr),_stdin(nullptr),_stdout(nullptr),_stderr(nullptr)
+		:_process(nullptr)/*,_stdin(nullptr),_stdout(nullptr),_stderr(nullptr)*/
 	{
 		if(fs::exists(name))
 		{
@@ -93,31 +93,31 @@ namespace lemon {namespace exec {
 		return *this;
 	}
 
-	/**
-	* set the stdin reader
-	*/
-	command & command::setstdin(io::reader_close *reader)
-	{
-		this->_stdin = reader;
-		return *this;
-	}
-	/**
-	* set the stdout writer
-	*/
-	command & command::setstdout(io::writer_close * writer)
-	{
-		this->_stdout = writer;
-		return *this;
-	}
-
-	/**
-	* set the stderr writer
-	*/
-	command & command::setstderr(io::writer_close * writer)
-	{
-		this->_stderr = writer;
-		return *this;
-	}
+//	/**
+//	* set the stdin reader
+//	*/
+//	command & command::setstdin(io::reader_close *reader)
+//	{
+//		this->_stdin = reader;
+//		return *this;
+//	}
+//	/**
+//	* set the stdout writer
+//	*/
+//	command & command::setstdout(io::writer_close * writer)
+//	{
+//		this->_stdout = writer;
+//		return *this;
+//	}
+//
+//	/**
+//	* set the stderr writer
+//	*/
+//	command & command::setstderr(io::writer_close * writer)
+//	{
+//		this->_stderr = writer;
+//		return *this;
+//	}
 
 	int command::wait()
 	{

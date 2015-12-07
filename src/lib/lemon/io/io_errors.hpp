@@ -18,9 +18,9 @@ namespace lemon { namespace io {
 			return "lemon::os::os_error_category";
 		}
 
-		std::string message(int _Errval) const
+		std::string message(int val) const
 		{
-			switch ((errc)_Errval)
+			switch ((errc)val)
 			{
 			case errc::operation_canceled:
 				return "io operation canceled";

@@ -2,7 +2,6 @@
 #include <lemon/test/test.hpp>
 #include <lemon/os/sysinfo.hpp>
 #include <lemon/os/exec.hpp>
-#include <lemon/io/readwriter.hpp>
 
 using namespace lemon::os;
 using namespace lemon::exec;

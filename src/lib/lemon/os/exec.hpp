@@ -1,7 +1,6 @@
 #ifndef LEMON_OS_EXEC_HPP
 #define LEMON_OS_EXEC_HPP
 
-#include <lemon/io/readwriter.hpp>
 #include <vector>
 #include <tuple>
 #include <string>
@@ -20,19 +19,6 @@ namespace lemon{ namespace exec{
 		command(const std::string & name);
 
 		~command();
-		/**
-		 * set the stdin reader
-		 */
-		command & setstdin(io::reader_close *reader);
-		/**
-		 * set the stdout writer
-		 */
-		command & setstdout(io::writer_close * writer);
-
-		/**
-		* set the stderr writer
-		*/
-		command & setstderr(io::writer_close * writer);
 		/**
 		 * set the child process env
 		 */
@@ -53,9 +39,6 @@ namespace lemon{ namespace exec{
 
 	private:
 		std::string							_path; // command fullpath
-		io::reader_close*					_stdin;
-		io::writer_close*					_stdout;
-		io::writer_close*					_stderr;
 		std::vector<std::string>			_env;
 		std::string							_workpath;
 		os::process*						_process;

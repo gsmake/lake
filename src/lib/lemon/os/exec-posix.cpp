@@ -19,11 +19,11 @@ namespace lemon{ namespace exec{
             const std::string &path,
             const std::vector<std::string> &args,
             const std::string workdir,
-            io::reader_close* _stdin,
-            io::writer_close* _stdout,
-            io::writer_close* _stderr,
+//            io::reader_close* _stdin,
+//            io::writer_close* _stdout,
+//            io::writer_close* _stderr,
             const std::vector<std::string> &env)
-            :_path(path),_stdin(nullptr),_stdout(nullptr),_stderr(nullptr),_logger(lemon::log::get("exec"))
+            :_path(path),_logger(lemon::log::get("exec"))/*,_stdin(nullptr),_stdout(nullptr),_stderr(nullptr)*/
         {
 
 
@@ -32,29 +32,29 @@ namespace lemon{ namespace exec{
 //            this->_stderr = _stderr;
 
 
-            if(_stdin != nullptr)
-            {
-                if(0 != pipe(_pipeIn))
-                {
-                    throw std::system_error(errno,std::system_category(),"create stdin pipe error");
-                }
-            }
-
-            if(_stdout != nullptr)
-            {
-                if(0 != pipe(_pipeOut))
-                {
-                    throw std::system_error(errno,std::system_category(),"create stdout pipe error");
-                }
-            }
-
-            if(_stderr != nullptr)
-            {
-                if(0 != pipe(_pipeErr))
-                {
-                    throw std::system_error(errno,std::system_category(),"create stderr pipe error");
-                }
-            }
+//            if(_stdin != nullptr)
+//            {
+//                if(0 != pipe(_pipeIn))
+//                {
+//                    throw std::system_error(errno,std::system_category(),"create stdin pipe error");
+//                }
+//            }
+//
+//            if(_stdout != nullptr)
+//            {
+//                if(0 != pipe(_pipeOut))
+//                {
+//                    throw std::system_error(errno,std::system_category(),"create stdout pipe error");
+//                }
+//            }
+//
+//            if(_stderr != nullptr)
+//            {
+//                if(0 != pipe(_pipeErr))
+//                {
+//                    throw std::system_error(errno,std::system_category(),"create stderr pipe error");
+//                }
+//            }
 
 
             _pid = fork();
@@ -96,39 +96,39 @@ namespace lemon{ namespace exec{
             const std::vector<std::string> &env)
         {
 
-            if(_stdin != nullptr)
-            {
-                if(-1 == dup2(_pipeIn[0], STDIN_FILENO))
-                {
-                    throw  std::system_error(errno,std::system_category(),"replace stdin error");
-                }
-
-                close(_pipeIn[0]);
-                close(_pipeIn[1]);
-            }
-
-            if(_stdout != nullptr)
-            {
-                if(-1 == dup2(_pipeOut[1], STDOUT_FILENO))
-                {
-
-                    throw  std::system_error(errno,std::system_category(),"replace stdout error");
-                }
-
-                close(_pipeOut[0]);
-                close(_pipeOut[1]);
-            }
-
-            if(_stderr != nullptr)
-            {
-                if(-1 == dup2(_pipeErr[1], STDERR_FILENO))
-                {
-                    throw  std::system_error(errno,std::system_category(),"replace stderr error");
-                }
-
-                close(_pipeErr[0]);
-                close(_pipeErr[1]);
-            }
+//            if(_stdin != nullptr)
+//            {
+//                if(-1 == dup2(_pipeIn[0], STDIN_FILENO))
+//                {
+//                    throw  std::system_error(errno,std::system_category(),"replace stdin error");
+//                }
+//
+//                close(_pipeIn[0]);
+//                close(_pipeIn[1]);
+//            }
+//
+//            if(_stdout != nullptr)
+//            {
+//                if(-1 == dup2(_pipeOut[1], STDOUT_FILENO))
+//                {
+//
+//                    throw  std::system_error(errno,std::system_category(),"replace stdout error");
+//                }
+//
+//                close(_pipeOut[0]);
+//                close(_pipeOut[1]);
+//            }
+//
+//            if(_stderr != nullptr)
+//            {
+//                if(-1 == dup2(_pipeErr[1], STDERR_FILENO))
+//                {
+//                    throw  std::system_error(errno,std::system_category(),"replace stderr error");
+//                }
+//
+//                close(_pipeErr[0]);
+//                close(_pipeErr[1]);
+//            }
 
             if(!workdir.empty())
             {
@@ -195,16 +195,16 @@ namespace lemon{ namespace exec{
         int                         _pipeIn[2];
         int                         _pipeOut[2];
         int                         _pipeErr[2];
-        io::reader_close*           _stdin;
-        io::writer_close*           _stdout;
-        io::writer_close*           _stderr;
+//        io::reader_close*           _stdin;
+//        io::writer_close*           _stdout;
+//        io::writer_close*           _stderr;
         const lemon::log::logger    &_logger;
     };
 
 
     command & command::start(std::vector<std::string> args)
     {
-        this->_process = new posix_process(_path, args, _workpath,_stdin, _stdout, _stderr, _env);
+        this->_process = new posix_process(_path, args, _workpath, _env);
 
         return *this;
     }
