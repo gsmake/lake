@@ -10,7 +10,7 @@
 
 
 
-namespace lemon{
+namespace lemon{ namespace uuids{
     struct uuid
     {
     public:
@@ -226,12 +226,12 @@ namespace lemon{
         std::random_device              _gen;
         distribution_type               _dist;
     };
-}
+}}
 
 namespace std {
 
     template <>
-    struct is_pod<lemon::uuid> : true_type {};
+    struct is_pod<lemon::uuids::uuid> : true_type {};
 
 }
 

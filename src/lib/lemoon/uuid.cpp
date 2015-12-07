@@ -9,12 +9,12 @@ namespace lemoon{ namespace uuid{
     namespace {
         std::once_flag flag;
 
-        lemon::random_generator *generator;
+        lemon::uuids::random_generator *generator;
     }
 
     static void init()
     {
-        generator = new lemon::random_generator();
+        generator = new lemon::uuids::random_generator();
     }
 
     int gen(lua_State *L)
@@ -23,7 +23,7 @@ namespace lemoon{ namespace uuid{
 
         auto val = (*generator)();
 
-        lua_pushstring(L,lemon::to_string(val).c_str());
+        lua_pushstring(L,lemon::uuids::to_string(val).c_str());
 
         return 1;
     }

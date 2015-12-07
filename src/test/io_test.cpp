@@ -1,19 +1,19 @@
+#include <chrono>
+
 #include <lemon/io/io.hpp>
 #include <lemon/test/test.hpp>
 
 
-using namespace lemon::io;
+using namespace lemon;
 using namespace std::chrono;
 
 test_(pipe)
 {
-    lemon::io::io_service io;
+    io::io_service ioservice;
 
-    lemon::io::pipe pipe(io);
+	io::pipe pipe(ioservice);
 
-    pipe.in();
-
-    pipe.out();
+	ioservice.dispatch_once(milliseconds(500));
 }
 
 

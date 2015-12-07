@@ -16,11 +16,11 @@ namespace lemon{namespace exec{
 			const std::string path,
 			std::vector<std::string> args,
 			const std::string workdir,
-			io::reader* _stdin, 
+		/*	io::reader* _stdin, 
 			io::writer* _stdout,
-			io::writer* _stderr,
+			io::writer* _stderr,*/
 			const std::vector<std::string> &env)
-			:_stdin(_stdin),_stdout(_stdout),_stderr(_stderr)
+			//:_stdin(_stdin),_stdout(_stdout),_stderr(_stderr)
 		{
 
 			SECURITY_ATTRIBUTES sa;
@@ -35,47 +35,47 @@ namespace lemon{namespace exec{
 			HANDLE stdoutHandler = GetStdHandle(STD_OUTPUT_HANDLE);
 			HANDLE stderrHandler = GetStdHandle(STD_ERROR_HANDLE);
 
-			// create child stdin handler
-			if(_stdin)
-			{
-				if(!::CreatePipe(&stdinHandler, &_stdinHandler, &sa, 0))
-				{
-					throw std::system_error(GetLastError(),std::system_category());
-				}
+			//// create child stdin handler
+			//if(_stdin)
+			//{
+			//	if(!::CreatePipe(&stdinHandler, &_stdinHandler, &sa, 0))
+			//	{
+			//		throw std::system_error(GetLastError(),std::system_category());
+			//	}
 
-				if(!::SetHandleInformation(_stdinHandler,HANDLE_FLAG_INHERIT,0))
-				{
-					throw std::system_error(GetLastError(), std::system_category());
-				}
-			}
+			//	if(!::SetHandleInformation(_stdinHandler,HANDLE_FLAG_INHERIT,0))
+			//	{
+			//		throw std::system_error(GetLastError(), std::system_category());
+			//	}
+			//}
 
-			// create child stdout handler
-			if (_stdout)
-			{
-				if (!::CreatePipe(&_stdoutHandler,&stdoutHandler, &sa, 0))
-				{
-					throw std::system_error(GetLastError(), std::system_category());
-				}
+			//// create child stdout handler
+			//if (_stdout)
+			//{
+			//	if (!::CreatePipe(&_stdoutHandler,&stdoutHandler, &sa, 0))
+			//	{
+			//		throw std::system_error(GetLastError(), std::system_category());
+			//	}
 
-				if (!::SetHandleInformation(_stdoutHandler, HANDLE_FLAG_INHERIT, 0))
-				{
-					throw std::system_error(GetLastError(), std::system_category());
-				}
-			}
+			//	if (!::SetHandleInformation(_stdoutHandler, HANDLE_FLAG_INHERIT, 0))
+			//	{
+			//		throw std::system_error(GetLastError(), std::system_category());
+			//	}
+			//}
 
-			// create child stdout handler
-			if (_stderr)
-			{
-				if (!::CreatePipe(&_stderrHandler, &stderrHandler, &sa, 0))
-				{
-					throw std::system_error(GetLastError(), std::system_category());
-				}
+			//// create child stdout handler
+			//if (_stderr)
+			//{
+			//	if (!::CreatePipe(&_stderrHandler, &stderrHandler, &sa, 0))
+			//	{
+			//		throw std::system_error(GetLastError(), std::system_category());
+			//	}
 
-				if (!::SetHandleInformation(_stderrHandler, HANDLE_FLAG_INHERIT, 0))
-				{
-					throw std::system_error(GetLastError(), std::system_category());
-				}
-			}
+			//	if (!::SetHandleInformation(_stderrHandler, HANDLE_FLAG_INHERIT, 0))
+			//	{
+			//		throw std::system_error(GetLastError(), std::system_category());
+			//	}
+			//}
 
 			convert conv;
 
@@ -148,15 +148,15 @@ namespace lemon{namespace exec{
 		HANDLE					_stdinHandler;
 		HANDLE					_stdoutHandler;
 		HANDLE					_stderrHandler;
-		io::reader				*_stdin;
+	/*	io::reader				*_stdin;
 		io::writer				*_stdout;
-		io::writer				*_stderr;
+		io::writer				*_stderr;*/
 	};
 
 
 	command & command::start(std::vector<std::string> args)
 	{
-		_process = new win32_process(_path, args, _workpath,_stdin, _stdout, _stderr, _env);
+		_process = new win32_process(_path, args, _workpath,/*_stdin, _stdout, _stderr,*/ _env);
 
 		return *this;
 	}
