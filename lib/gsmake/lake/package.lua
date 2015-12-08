@@ -15,8 +15,6 @@ function module.ctor(lake,path,name,version)
     {
         lake        = lake                                           ;
         db          = lake.DB                                        ;
-        Name        = name                                           ;
-        Version     = version or  lake.Config.GSMAKE_DEFAULT_VERSION ;
         Path        = path                                           ;
         Plugins     = {}                                             ; -- package scope register plugins
         Tasks       = {}                                             ; -- package scope register tasks
@@ -28,9 +26,17 @@ function module.ctor(lake,path,name,version)
     if fs.exists(gsmakeFilePath) then
         logger:V("found a standard lake package :%s",path)
 
-        local sandbox = class.new("lemoon.sandbox")
+        local sandbox = class.new("lemoon.sandbox","lake.sandbox.package",obj)
 
-        sandbox:run(gsmakeFilePath,"lake.sandbox.package",obj)
+        sandbox:run(gsmakeFilePath)
+    end
+
+    if obj.Name == nil then
+        obj.Name = name
+    end
+
+    if obj.Version == nil then
+        obj.Version = version or  lake.Config.GSMAKE_DEFAULT_VERSION ;
     end
 
     return obj

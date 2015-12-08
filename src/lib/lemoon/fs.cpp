@@ -3,6 +3,7 @@
 #include <lua/lua.hpp>
 #include <lemoon/config.h>
 #include <lemon/fs/fs.hpp>
+#include <lemon/log/log.hpp>
 
 namespace lemoon{namespace fs{
 

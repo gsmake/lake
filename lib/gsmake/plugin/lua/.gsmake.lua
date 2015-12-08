@@ -7,14 +7,13 @@ local logger    = class.new("lemoon.log","lake")
 
 task.install = function(self,prefix)
 
-    logger:I("install prefix :%s",prefix)
-    logger:I("package path :%s",self.Owner.Path)
-
     local packagePath   = self.Package.Path
     local properties    = self.Package.Properties
     local name          = self.Owner.Name
 
-    local targetPath  =  filepath.join(prefix,"gsmake","plugin",name)
+    local subdir = name:gsub("%.","/")
+
+    local targetPath  =  filepath.join(prefix,"gsmake",subdir,"lib",subdir)
 
     -- remove preversion plugin
     if fs.exists(targetPath) then
@@ -39,7 +38,3 @@ lua = {
 
     pluginSrcDirs   = { "src/plugin/lua" };
 }
-
-
-
-

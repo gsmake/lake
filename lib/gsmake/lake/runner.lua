@@ -1,4 +1,5 @@
 local class     = require "lemoon.class"
+local filepath  = require "lemoon.filepath"
 
 local logger    = class.new("lemoon.log","lake")
 
@@ -59,17 +60,24 @@ function module:run(name,...)
         error(string.format("[%s:%s] unknown task name :%s",self.package.Name,self.package.Version,name))
     end
 
---    local callstack = self:topSort(taskGroup)
+   local callstack = self:topSort(taskGroup)
 
-    for _, taskgroup in ipairs(self:topSort(taskGroup)) do
+    for i, taskgroup in ipairs(callstack) do
 
         logger:I("invoke task(%s)",taskgroup.Name)
 
         for _,task in ipairs(taskgroup) do
             logger:D("\tfrom package [%s:%s] ...",task.Package.Name,task.Package.Version)
-            --if i == #callstack then
-                task.F(task,...)
-            --end
+
+            local subdir = task.Package.Name:gsub("%.","/")
+
+            local sandbox = class.new("lemoon.sandbox","lake.sandbox.pluginrunner",filepath.join(task.Owner.Path,".gsmake/gsmake/",subdir,"lib"))
+
+            if i == #callstack then
+                sandbox:call(task.F,task,...)
+            else
+                sandbox:call(task.F,task)
+            end
             logger:D("\tfrom package [%s:%s] -- success",task.Package.Name,task.Package.Version)
         end
 

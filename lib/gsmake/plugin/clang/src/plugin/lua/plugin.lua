@@ -7,9 +7,9 @@ task.gencmake = function(self)
 
     logger:I("%s",package.path)
 
-    local cmakegen = class.new("cmakegen")
+    local cmakegen = class.new("github.com.gsmake.clang.cmakegen")
 
-    logger:D("generate cmake project files")
+    logger:D("generate cmake project files :%s",cmakegen)
 
 end
 
@@ -25,4 +25,3 @@ task.install = function(self,target)
 
 end
 task.install.Prev = "compile"
-

@@ -35,7 +35,9 @@ function module:load()
 
     self.Package = self.loader:load(sourcePath,self.Name,self.Version)
 
-    self.Path = filepath.join(self.InstallDir,"gsmake","plugin",self.Name)
+    local subdir = self.Name:gsub("%.","/")
+
+    self.Path = filepath.join(self.InstallDir,"gsmake",subdir,"lib",subdir)
 
     return self.Package
 
@@ -49,9 +51,9 @@ function module:setup()
 
     local pluginMain = filepath.join(self.Path,"plugin.lua")
 
-    local sandbox = class.new("lemoon.sandbox")
+    local sandbox = class.new("lemoon.sandbox","lake.sandbox.plugin",self,self.Path)
 
-    sandbox:run(pluginMain,"lake.sandbox.plugin",self,self.Path)
+    sandbox:run(pluginMain)
 
 end
 

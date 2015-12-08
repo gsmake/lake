@@ -4,6 +4,8 @@ function module.new(name,...)
 
     local metatable = require(name)
 
+    assert(type(metatable) == "table",string.format("class(%s) script must return table val",name))
+
     local obj
 
     if metatable.ctor ~= nil then

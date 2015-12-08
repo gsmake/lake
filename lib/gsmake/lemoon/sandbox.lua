@@ -12,30 +12,54 @@ local function loadScript(script,env)
     return closure()
 end
 
-function module:run(script,sandbox,...)
-    local factory = require(sandbox)
+function module.ctor(sandbox,...)
+    local obj = {
+        originPath      = _ENV.package.path;
+        originCPath     = _ENV.package.cpath;
+        originLoaded    = class.clone(_ENV.package.loaded);
+        env             = class.clone(_ENV);
+    }
 
-    local originPath = _ENV.package.path
-    local originCPath = _ENV.package.cpath
-    local originLoaded = class.clone(_ENV.package.loaded)
+    require(sandbox).ctor(obj.env,...)
 
-    local env = class.clone(_ENV)
+    assert(obj.env.package == _ENV.package,string.format("sandbox(%s) modified variable(package) : not allow",sandbox))
 
-    factory.ctor(env,...)
+    return obj
+end
 
-    assert(env.package == _ENV.package,string.format("sandbox(%s) modified variable(package) : not allow",sandbox))
+function module:call(F,...)
+    self.env,_ENV = _ENV,self.env
+    local ret = { pcall(F,...) }
+    self.env,_ENV = _ENV,self.env
 
-    local ret = { pcall(loadScript,script,env) }
-
-    _ENV.package.path = originPath
-    _ENV.package.cpath = originCPath
+    _ENV.package.path = self.originPath
+    _ENV.package.cpath = self.originCPath
 
     for k in pairs(_ENV.package.loaded) do
-        if originLoaded[k] == nil then
+        if self.originLoaded[k] == nil then
             _ENV.package.loaded[k] = nil
         end
     end
 
+    if not ret[1] then
+        error("\n\t" .. ret[2],2)
+    end
+
+    return table.unpack(ret,2)
+end
+
+function module:run(script)
+
+    local ret = { pcall(loadScript,script,self.env) }
+
+    _ENV.package.path = self.originPath
+    _ENV.package.cpath = self.originCPath
+
+    for k in pairs(_ENV.package.loaded) do
+        if self.originLoaded[k] == nil then
+            _ENV.package.loaded[k] = nil
+        end
+    end
 
     if not ret[1] then
         error("\n\t" .. ret[2],2)
@@ -46,4 +70,3 @@ end
 
 
 return module
-

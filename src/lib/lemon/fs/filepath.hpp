@@ -1,6 +1,7 @@
 #ifndef LEMON_FS_PATH_HPP
 #define LEMON_FS_PATH_HPP
 
+#include <utility>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -167,8 +168,6 @@ namespace lemon{ namespace filepath{
 
             for(auto & c : body)
             {
-
-
                 if (c == CharType('\\') || c == CharType('/'))
                 {
                     auto node  = body.substr(start,curr - start);
@@ -189,6 +188,15 @@ namespace lemon{ namespace filepath{
             {
                 _nodes.push_back(body.substr(start));
             }
+
+			if(body[0] != CharType('\\') && body[0] != CharType('/') && _volume.empty())
+			{
+				nodes_type nodes = { string_type(1,CharType('.')) };
+
+				nodes.insert(nodes.end(), _nodes.begin(), _nodes.end());
+
+				_nodes = std::move(nodes);
+			}
 
 			if (!source.empty() && (source[source.length() -1] == CharType('/') || source[source.length() - 1] == CharType('\\')))
 			{

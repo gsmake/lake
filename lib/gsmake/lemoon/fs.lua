@@ -1,5 +1,5 @@
---local class     = require "lemoon.class"
---local logger    = class.new("lemoon.log","lemoon")
+local class     = require "lemoon.class"
+local logger    = class.new("lemoon.log","lemoon")
 
 local module = lemoon.fs()
 
@@ -20,11 +20,16 @@ function module.copy_dir_and_children(from,to,skipdirs)
     assert(module.isdir(from),"source must be dir")
 
     if module.exists(to) then
-
+        logger:E("~~~~~~~~~~~~~~~~~")
         module.rm(to,true)
     end
 
-    module.mkdir(to,true)
+    local ok,err = pcall(module.mkdir,to,true)
+
+    if not ok then
+        logger:E("create dir :%s -- failed",to)
+        error(debug.traceback() .. "\n\t" .. err)
+    end
 
 
     module.list(from,function(entry)
