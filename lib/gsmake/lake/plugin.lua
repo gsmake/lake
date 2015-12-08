@@ -51,7 +51,7 @@ function module:setup()
 
     local sandbox = class.new("lemoon.sandbox")
 
-    sandbox:run(pluginMain,"lake.sandbox.plugin",self,path)
+    sandbox:run(pluginMain,"lake.sandbox.plugin",self,self.Path)
 
 end
 

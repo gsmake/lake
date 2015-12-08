@@ -1,4 +1,8 @@
-local sys = require "lemoon.sys"
+local sys   = require "lemoon.sys"
+local class = require "lemoon.class"
+
+local logger = class.new("lemoon.log","clang")
+
 
 local module = {}
 
@@ -28,8 +32,10 @@ function module.ctor(env,plugin,path)
 
     env.plugin = plugin
 
+
     env.package.path = string.format("%s;%s/?.lua",env.package.path,path)
     env.package.cpath = string.format("%s;%s/?%s",env.package.cpath,path,sys.SO_NAME)
+
 end
 
 
