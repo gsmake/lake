@@ -17,6 +17,7 @@ function module.ctor(env,plugin,path)
             plugin.Tasks[name] = {
                 Name            = name;
                 F               = F;
+                Owner           = plugin.Owner;
                 Package         = plugin.Package;
                 Desc            = "";
             }
@@ -24,6 +25,8 @@ function module.ctor(env,plugin,path)
     }
 
     setmetatable(env.task,task_metatable)
+
+    env.plugin = plugin
 
     env.package.path = string.format("%s;%s/?.lua",env.package.path,path)
     env.package.cpath = string.format("%s;%s/?%s",env.package.cpath,path,sys.SO_NAME)

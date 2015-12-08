@@ -7,7 +7,7 @@ local logger    = class.new("lemoon.log","lake")
 
 local module = {}
 
-function module.ctor()
+function module.ctor(workspace)
 
     local obj = {
         Config  = class.clone(require "config");
@@ -20,7 +20,7 @@ function module.ctor()
     -- set the machine scope package cached directory
     obj.Config.GSMAKE_REPO             = filepath.join(obj.Config.GSMAKE_HOME,"repo")
     -- set the project workspace
-    obj.Config.GSMAKE_WORKSPACE        = fs.dir()
+    obj.Config.GSMAKE_WORKSPACE        = workspace
 
     if not fs.exists(filepath.join(obj.Config.GSMAKE_WORKSPACE ,obj.Config.GSMAKE_FILE)) then
         obj.Config.GSMAKE_WORKSPACE = obj.Config.GSMAKE_HOME
@@ -57,7 +57,7 @@ function module.ctor()
 
 end
 
-function module:run()
+function module:run(...)
     self.DB     = class.new("lake.db",self)
     self.Sync   = class.new("lake.sync",self)
     self.Loader = class.new("lake.loader",self)
@@ -87,7 +87,7 @@ function module:run()
     -- load root package
     local package = self.Loader:load(self.Config.GSMAKE_WORKSPACE)
 
-    class.new("lake.runner",package):run(table.unpack(arg))
+    class.new("lake.runner",package):run(...)
 end
 
 return module

@@ -98,10 +98,10 @@ function module:query_install(name,version)
 
     return self:localdb(function(db)
         for _,path,_,_ in db:urows(SQL) do
-            return path,true
+            return true,path
         end
 
-        return "",false
+        return false
     end)
 end
 

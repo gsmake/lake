@@ -12,10 +12,12 @@ function module.ctor(name,owner)
     local obj = {
         Name        = name                                         ; -- plugin name
         Version     = owner.lake.Config.GSMAKE_DEFAULT_VERSION     ; -- plugin version
+        Config      = owner.lake.Config                            ; -- gsmake config
         Owner       = owner                                        ; -- the package plugin belongs to
+        Tasks       = {}                                           ; -- plugin register task list
+        InstallDir  = owner.lake.Config.GSMAKE_INSTALL_PATH        ; -- plugin install path
         sync        = owner.lake.Sync                              ; -- gsmake sync service
         loader      = owner.lake.Loader                            ; -- gsmake context
-        install_dir = owner.lake.Config.GSMAKE_INSTALL_PATH        ; -- plugin install path
     }
 
     return obj
@@ -33,13 +35,13 @@ function module:load()
 
     self.Package = self.loader:load(sourcePath,self.Name,self.Version)
 
+    self.Path = filepath.join(self.InstallDir,"gsmake","plugin",self.Name)
+
     return self.Package
 
 end
 
 function module:setup()
-
-    self.Path = filepath.join(self.install_dir,"gsmake","plugin")
 
     if not fs.exists(self.Path) then
         error(string.format("[%s:%s]'s plugin [%s:%s] not install ",self.Owner.Name,self.Owner.Version,self.Name,self.Version))

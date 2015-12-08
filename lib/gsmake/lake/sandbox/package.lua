@@ -35,6 +35,7 @@ function module.ctor(env,package)
                 Name            = name;
                 F               = F;
                 Package         = package;
+                Owner           = package;
                 Desc            = "";
             }
         end;

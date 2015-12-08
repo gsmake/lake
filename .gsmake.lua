@@ -1,16 +1,24 @@
 name "github.com/gsmake/lake" -- package name
 
-version "master" -- package version
+--version "master" -- package version
 
 plugin "github.com/gsmake/clang"
 
---plugin "github.com/gsmake/lua"
+plugin "github.com/gsmake/lua"
 
-task.install = function()
 
-end
 
-task.install.prev = "compile"
+lua = {
 
-task.install.Description = "gsmake bootstrap install command"
+    srcDirs         = { "lib" };
+}
 
+clang = {
+    modules = {
+        lemon = {
+            type    = "static";
+
+            srcDir = "src/lib/lemon";
+        };
+    }
+}

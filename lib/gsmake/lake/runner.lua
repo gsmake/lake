@@ -14,6 +14,7 @@ function module.ctor(package)
     }
 
     package:link()
+
     package:setup()
 
     return obj
@@ -48,11 +49,17 @@ function module:run(name,...)
         end
     end
 
+    if name == nil or name == "" then
+        return
+    end
+
     local taskGroup = self.taskGroups[name]
 
     if nil == taskGroup then
         error(string.format("[%s:%s] unknown task name :%s",self.package.Name,self.package.Version,name))
     end
+
+--    local callstack = self:topSort(taskGroup)
 
     for _, taskgroup in ipairs(self:topSort(taskGroup)) do
 
@@ -60,7 +67,9 @@ function module:run(name,...)
 
         for _,task in ipairs(taskgroup) do
             logger:D("\tfrom package [%s:%s] ...",task.Package.Name,task.Package.Version)
-            task.F(...)
+            --if i == #callstack then
+                task.F(task,...)
+            --end
             logger:D("\tfrom package [%s:%s] -- success",task.Package.Name,task.Package.Version)
         end
 
@@ -113,7 +122,11 @@ function module:topSort(taskGroup)
             local childSortGroups = self:topSort(prev)
 
             if childSortGroups ~= nil then
-                table.insert(sortGroups,childSortGroups)
+
+                for _,taskGroups in ipairs(childSortGroups) do
+                    table.insert(sortGroups,taskGroups)
+                end
+
             end
         end
     end

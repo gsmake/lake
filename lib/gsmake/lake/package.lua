@@ -1,6 +1,5 @@
 -- the gsmake package module
 local fs        = require "lemoon.fs"
-local sys       = require "lemoon.sys"
 local class     = require "lemoon.class"
 local filepath  = require "lemoon.filepath"
 
@@ -15,6 +14,7 @@ function module.ctor(lake,path,name,version)
     local obj =
     {
         lake        = lake                                           ;
+        db          = lake.DB                                        ;
         Name        = name                                           ;
         Version     = version or  lake.Config.GSMAKE_DEFAULT_VERSION ;
         Path        = path                                           ;
@@ -58,25 +58,23 @@ end
 
 function module:setup()
 
-    local gsmakePath = filepath.join(self.lake.Config.GSMAKE_HOME,"bin","gsmake",sys.EXE_NAME)
-
     for _,plugin in pairs(self.Plugins) do
 
         logger:D("[%s:%s] link plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
 
         local package = plugin.Package
 
-        local exec = sys.exec(gsmakePath)
+        local ok = self.db:query_install(package.Name,package.Version)
 
-        exec:dir(package.Path)
+--        if not ok or not fs.isdir(plugin.Path) then -- link plugin
 
-        exec:start("install",self.lake.Config.GSMAKE_INSTALL_PATH)
+            class.new("lake",package.Path):run("install",plugin.InstallDir)
 
-        if exec:wait() ~= 0 then
-            error(string.format("[%s:%s] install plugin [%s:%s] -- failed",self.Name,self.Version,plugin.Name,plugin.Version))
-        end
+            self.db:save_install(package.Name,package.Version,package.Path,plugin.Path,true)
 
-        logger:D("[%s:%s] link plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
+            logger:D("[%s:%s] link plugin [%s:%s] -- success",self.Name,self.Version,plugin.Name,plugin.Version)
+
+--        end
 
         logger:D("[%s:%s] setup plugin [%s:%s]",self.Name,self.Version,plugin.Name,plugin.Version)
 
